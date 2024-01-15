@@ -18,13 +18,15 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <!--        https://plugins.jetbrains.com/docs/intellij/notifications.html-->
         <intentionAction>
+            <language>JAVA</language>
             <className>pe.pjh.ws.TestIntentionAction</className>
+            <category>SDK intentions</category>
         </intentionAction>
     </extensions>
     <actions>

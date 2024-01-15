@@ -1,23 +1,30 @@
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.0"
-    id("org.jetbrains.intellij") version "1.15.0"
+    id("org.jetbrains.kotlin.jvm") version "1.9.21"
+    id("org.jetbrains.intellij") version "1.16.1"
 }
 
-group = "com.example"
+group = "pe.pjh"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+//    maven {
+//        url = uri("https://www.jetbrains.com/intellij-repository/releases")
+//    }
 }
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.2.5")
+    version.set("2023.1.5")
     type.set("IC") // Target IDE Platform
 
-    plugins.set(listOf(/* Plugin Dependencies */))
+    plugins.set(listOf("com.intellij.java"))
+}
+
+dependencies{
+    implementation("com.couchbase.lite:couchbase-lite-java:3.1.3")
 }
 
 tasks {
@@ -31,8 +38,8 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222")
-        untilBuild.set("232.*")
+        sinceBuild.set("231")
+        untilBuild.set("241.*")
     }
 
     signPlugin {

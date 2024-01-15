@@ -41,8 +41,8 @@ public class EditorIllustrationAction extends AnAction {
 
         System.out.println(psiFile.getFileType().getName());
 
-        PsiDirectory psiDirectory = psiFile.getContainingDirectory();
 
+        PsiDirectory psiDirectory = psiFile.getContainingDirectory();
 
 
         // Work off of the primary caret to get the selection info
@@ -50,9 +50,9 @@ public class EditorIllustrationAction extends AnAction {
         int start = primaryCaret.getSelectionStart();
         int end = primaryCaret.getSelectionEnd();
 
-        String currentText =document.getText(TextRange.create(start, end)) ;
+        String currentText = document.getText(TextRange.create(start, end));
         LOG.info(currentText);
-        MyNotifier.notifyError(project,currentText);
+        // MyNotifier.notifyError(project,currentText);
         // Replace the selection with a fixed string.
         // Must do this document change in a write action context.
         WriteCommandAction.runWriteCommandAction(project, () ->
