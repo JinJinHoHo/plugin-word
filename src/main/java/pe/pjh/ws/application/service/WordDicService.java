@@ -1,10 +1,10 @@
-package pe.pjh.ws.application;
+package pe.pjh.ws.application.service;
 
 import com.couchbase.lite.*;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 
-@Service(Service.Level.PROJECT)
+@Service
 public final class WordDicService {
 
     private static final Logger log = Logger.getInstance(WordDicService.class);

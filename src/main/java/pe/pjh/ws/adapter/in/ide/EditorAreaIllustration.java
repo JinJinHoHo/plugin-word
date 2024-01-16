@@ -1,4 +1,4 @@
-package pe.pjh.ws;
+package pe.pjh.ws.adapter.in.ide;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

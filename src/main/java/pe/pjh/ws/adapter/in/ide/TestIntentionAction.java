@@ -1,4 +1,4 @@
-package pe.pjh.ws;
+package pe.pjh.ws.adapter.in.ide;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -17,7 +17,7 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import pe.pjh.ws.application.WordDicService;
+import pe.pjh.ws.application.service.WordDicService;
 
 @NonNls
 public final class TestIntentionAction implements IntentionAction {

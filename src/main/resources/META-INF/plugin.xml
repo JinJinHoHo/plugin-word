@@ -25,18 +25,18 @@
     <extensions defaultExtensionNs="com.intellij">
         <intentionAction>
             <language>JAVA</language>
-            <className>pe.pjh.ws.TestIntentionAction</className>
+            <className>pe.pjh.ws.adapter.in.ide.TestIntentionAction</className>
             <category>SDK intentions</category>
         </intentionAction>
     </extensions>
     <actions>
-        <action id="pe.pjh.ws.PopupDialogAction" class="pe.pjh.ws.PopupDialogAction"
+        <action id="pe.pjh.ws.adapter.in.ide.PopupDialogAction" class="pe.pjh.ws.adapter.in.ide.PopupDialogAction"
                 text="Pop Dialog Action" description="Test">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
         <action
                 id="EditorBasics.EditorIllustrationAction"
-                class="pe.pjh.ws.EditorIllustrationAction"
+                class="pe.pjh.ws.adapter.in.ide.EditorIllustrationAction"
                 text="테스트"
                 description="Replaces selected text with 'Replacement'."
                 icon="AllIcons.Graph.NodeSelectionMode">
@@ -44,14 +44,14 @@
         </action>
         <action
                 id="EditorBasics.EditorAreaIllustration"
-                class="pe.pjh.ws.EditorAreaIllustration"
+                class="pe.pjh.ws.adapter.in.ide.EditorAreaIllustration"
                 text="테스트2"
                 description="Replaces selected text with 'Replacement'."
                 icon="AllIcons.Graph.NodeSelectionMode">
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
         </action>
-        <action id="pe.pjh.ws.SuggestioPhysicalNameAction"
-                class="pe.pjh.ws.SuggestioPhysicalNameAction"
+        <action id="pe.pjh.ws.adapter.in.ide.SuggestioPhysicalNameAction"
+                class="pe.pjh.ws.adapter.in.ide.SuggestioPhysicalNameAction"
                 text="물리명 제안" description="물리명 제안">
             <add-to-group group-id="QuickActions" anchor="last"/>
         </action>
