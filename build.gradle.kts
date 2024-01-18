@@ -25,6 +25,10 @@ intellij {
 
 dependencies{
     implementation("com.couchbase.lite:couchbase-lite-java:3.1.3")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    testImplementation(platform("org.junit:junit-bom:5.10.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 tasks {
@@ -50,5 +54,12 @@ tasks {
 
     publishPlugin {
         token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
     }
 }

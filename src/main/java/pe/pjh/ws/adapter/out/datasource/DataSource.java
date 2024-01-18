@@ -12,6 +12,8 @@ package pe.pjh.ws.adapter.out.datasource;
  */
 public interface DataSource {
 
+    String getDataSourceName();
+
 
     /**
      * 연결 여부 확인.

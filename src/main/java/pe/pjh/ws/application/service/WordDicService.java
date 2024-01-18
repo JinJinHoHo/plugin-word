@@ -35,7 +35,7 @@ public final class WordDicService {
 // 문서 읽기
             document = database.getDocument(mutableDoc.getId());
         }
-        log.info("Document ID :: " + document.getId());
+//        log.info("Document ID :: " + document.getId());
 
 // JSON 형태
         log.info("Learning " + document.getString("type"));

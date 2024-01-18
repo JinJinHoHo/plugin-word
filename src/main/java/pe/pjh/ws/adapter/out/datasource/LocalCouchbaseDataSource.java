@@ -3,44 +3,45 @@ package pe.pjh.ws.adapter.out.datasource;
 import com.couchbase.lite.*;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSet;
+import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 import pe.pjh.ws.util.ExecuterParam2;
-import pe.pjh.ws.application.service.DataSourceSetting;
+import pe.pjh.ws.application.service.setting.DataSourceSetting;
 
-import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LocalCouchbaseDataSource implements DataSource {
 
     private static final Logger log = Logger.getInstance(LocalCouchbaseDataSource.class);
 
-    DataSourceSetting dataSourceSetting;
+    DataSetSetting.SourceSetting sourceSetting;
 
     private boolean connected = false;
 
     DatabaseConfiguration config;
 
-    public LocalCouchbaseDataSource(DataSourceSetting dataSourceSetting) {
-        this.dataSourceSetting = dataSourceSetting;
+    public LocalCouchbaseDataSource(DataSetSetting.SourceSetting dataSourceSetting) {
+        this.sourceSetting = dataSourceSetting;
 
         connection();
 
     }
 
-    public void pluginInit() {
-        URL url = getClass().getResource("/resources/data/data_go_kr_cmn_stn_trm_6th_word.json");
-    }
-
     public Document execute(ExecuterParam2<Document, Database> executerParam2) throws CouchbaseLiteException {
-        try (Database database = new Database(dataSourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
         }
     }
 
     public void execute(ExecuterParam1<Database> execute) throws Exception {
-        try (Database database = new Database(dataSourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             execute.execute(database);
         }
+    }
+
+    @Override
+    public String getDataSourceName() {
+        return sourceSetting.getDatabaseName();
     }
 
     @Override
@@ -54,7 +55,7 @@ public class LocalCouchbaseDataSource implements DataSource {
 
         CouchbaseLite.init();
         config = new DatabaseConfiguration();
-        config.setDirectory(dataSourceSetting.getPath());
+        config.setDirectory(sourceSetting.getPath());
         connected = true;
 
     }

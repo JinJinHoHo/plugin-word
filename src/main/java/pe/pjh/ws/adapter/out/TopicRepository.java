@@ -1,4 +1,6 @@
 package pe.pjh.ws.adapter.out;
 
-public interface TopicRepository {
+import pe.pjh.ws.application.port.out.TopicBatchPort;
+
+public interface TopicRepository extends TopicBatchPort {
 }

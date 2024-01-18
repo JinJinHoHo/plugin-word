@@ -1,6 +1,7 @@
 package pe.pjh.ws.application;
 
 import java.util.List;
+import java.util.Map;
 
 /*
  "word": "RAFOS",
@@ -18,6 +19,13 @@ public class Word {
 
     private String description;
 
+    public Word(Topic topic, Map<String,Object> map) {
+        this.topic = topic;
+        this.word = (String) map.get("word");
+        this.englName = (String) map.get("engl_name");
+        this.names = (List<String>) map.get("name");
+        this.description = (String) map.get("description");
+    }
     public Word(Topic topic, String word, String englName, List<String> names, String description) {
         this.topic = topic;
         this.word = word;

@@ -17,10 +17,18 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import pe.pjh.ws.application.service.BundleDataSet;
+import pe.pjh.ws.application.service.BundleDataSetService;
 import pe.pjh.ws.application.service.WordDicService;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 @NonNls
 public final class TestIntentionAction implements IntentionAction {
+
+    public TestIntentionAction() {
+    }
 
     @Override
     public @IntentionName @NotNull String getText() {
@@ -80,6 +88,11 @@ public final class TestIntentionAction implements IntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-
+        BundleDataSetService someService = ServiceManager.getService(BundleDataSetService.class);
+        try {
+            someService.loadDataSet(BundleDataSet.CMN_STN_TRM_6TH);
+        } catch (URISyntaxException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
