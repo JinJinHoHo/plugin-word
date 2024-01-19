@@ -4,9 +4,22 @@ import pe.pjh.ws.application.service.SourceType;
 
 public class DataSetSetting {
 
-    private String dataSetName = "WD";
+    public static final String DEFAULT_DATABASE_NAME = "_wordic";
 
-    private SourceSetting sourceSetting = new SourceSetting();
+    private String dataSetName;
+
+    private SourceSetting sourceSetting;
+
+    public DataSetSetting() {
+        //Todo : 삭제 예정. 개발시 사용 하는 임시용.
+        this("WD", new SourceSetting());
+    }
+
+    public DataSetSetting(String dataSetName, SourceSetting sourceSetting) {
+        this.dataSetName = dataSetName;
+        this.sourceSetting = sourceSetting;
+    }
+
 
     public String getDataSetName() {
         return dataSetName;
@@ -24,13 +37,28 @@ public class DataSetSetting {
         this.sourceSetting = sourceSetting;
     }
 
-    public class SourceSetting {
+    public static class SourceSetting {
 
-        private String path = "/Users/pjh/test";
+        public SourceSetting() {
+            //Todo : 삭제 예정. 개발시 사용 하는 임시용.
+            this("/Users/pjh/test", SourceType.LocalCouchbaseLite);
+        }
 
-        private String databaseName = "WD";
+        public SourceSetting(String path, SourceType sourceType) {
+            this(path, DEFAULT_DATABASE_NAME, sourceType);
+        }
 
-        private SourceType sourceType = SourceType.LocalCouchbaseLite;
+        public SourceSetting(String path, String databaseName, SourceType sourceType) {
+            this.path = path;
+            this.databaseName = databaseName;
+            this.sourceType = sourceType;
+        }
+
+        private final String path;
+
+        private final String databaseName;
+
+        private final SourceType sourceType;
 
         public String getPath() {
             return path;

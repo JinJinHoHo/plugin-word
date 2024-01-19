@@ -6,7 +6,6 @@ import pe.pjh.ws.adapter.out.DataSet;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 import pe.pjh.ws.util.ExecuterParam2;
-import pe.pjh.ws.application.service.setting.DataSourceSetting;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,9 +21,6 @@ public class LocalCouchbaseDataSource implements DataSource {
 
     public LocalCouchbaseDataSource(DataSetSetting.SourceSetting dataSourceSetting) {
         this.sourceSetting = dataSourceSetting;
-
-        connection();
-
     }
 
     public Document execute(ExecuterParam2<Document, Database> executerParam2) throws CouchbaseLiteException {
@@ -50,13 +46,14 @@ public class LocalCouchbaseDataSource implements DataSource {
     }
 
     @Override
-    public void connection() {
-        if (connected) return;
+    public boolean connection() {
+        if (connected) return connected;
 
         CouchbaseLite.init();
         config = new DatabaseConfiguration();
         config.setDirectory(sourceSetting.getPath());
         connected = true;
+        return connected;
 
     }
 

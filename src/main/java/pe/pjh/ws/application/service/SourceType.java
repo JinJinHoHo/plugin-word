@@ -1,5 +1,6 @@
 package pe.pjh.ws.application.service;
 
 public enum SourceType {
-    LocalCouchbaseLite
+    LocalCouchbaseLite,
+    LocalFile
 }

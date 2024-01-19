@@ -2,10 +2,12 @@ package pe.pjh.ws.adapter.out;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
+import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseTopicRepository;
 import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseWordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.adapter.out.datasource.LocalCouchbaseDataSource;
+import pe.pjh.ws.application.WDException;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 
 import java.util.HashMap;
@@ -14,9 +16,11 @@ import java.util.Map;
 @Service
 public final class DataSetManager {
 
+    private static final Logger LOG = Logger.getInstance(DataSetManager.class);
+
     private final Map<String, DataSourceRepository> repositoryMap = new HashMap<>();
 
-    private static DataSetManager getInstance() {
+    public static DataSetManager getInstance() {
         return ApplicationManager.getApplication().getService(DataSetManager.class);
     }
 
@@ -28,7 +32,7 @@ public final class DataSetManager {
         return getInstance().repositoryMap.get(dataSetName).wordRepository();
     }
 
-    public void makeDateSet(DataSetSetting setting) {
+    public DataSourceRepository makeDateSet(DataSetSetting setting) {
         DataSourceRepository dataSourceRepository = switch (setting.getSourceSetting().getDataSourceType()) {
             case LocalCouchbaseLite -> {
                 DataSource ds = new LocalCouchbaseDataSource(setting.getSourceSetting());
@@ -40,12 +44,17 @@ public final class DataSetManager {
             default -> null;
         };
 
-        if(dataSourceRepository!=null) repositoryMap.put(setting.getDataSetName(),dataSourceRepository);
+        if (dataSourceRepository != null) {
+            LOG.info(setting.getDataSetName() + " 초기화");
+            repositoryMap.put(setting.getDataSetName(), dataSourceRepository);
+            return dataSourceRepository;
+        }
 
+        throw new WDException(setting.getDataSetName() + " 설정 오류.");
     }
 
 
-    record DataSourceRepository(
+    public record DataSourceRepository(
             DataSource dataSource,
             TopicRepository topicRepository,
             WordRepository wordRepository) {

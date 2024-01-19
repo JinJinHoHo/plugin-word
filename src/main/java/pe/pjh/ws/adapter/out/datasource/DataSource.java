@@ -25,7 +25,7 @@ public interface DataSource {
     /**
      * 연결.
      */
-    void connection();
+    boolean connection();
 
     /**
      * 데이터 초기화 여부
