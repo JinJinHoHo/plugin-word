@@ -2,6 +2,8 @@ package pe.pjh.ws.application.service.setting;
 
 import pe.pjh.ws.application.service.SourceType;
 
+import java.nio.file.Path;
+
 public class DataSetSetting {
 
     public static final String DEFAULT_DATABASE_NAME = "_wordic";
@@ -27,23 +29,23 @@ public class DataSetSetting {
 
     public static class SourceSetting {
 
-        public SourceSetting(String path, SourceType sourceType) {
+        public SourceSetting(Path path, SourceType sourceType) {
             this(path, DEFAULT_DATABASE_NAME, sourceType);
         }
 
-        public SourceSetting(String path, String databaseName, SourceType sourceType) {
+        public SourceSetting(Path path, String databaseName, SourceType sourceType) {
             this.path = path;
             this.databaseName = databaseName;
             this.sourceType = sourceType;
         }
 
-        private final String path;
+        private final Path path;
 
         private final String databaseName;
 
         private final SourceType sourceType;
 
-        public String getPath() {
+        public Path getPath() {
             return path;
         }
 

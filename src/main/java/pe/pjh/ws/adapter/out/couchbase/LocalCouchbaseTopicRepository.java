@@ -3,7 +3,6 @@ package pe.pjh.ws.adapter.out.couchbase;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.MutableDocument;
 import pe.pjh.ws.adapter.out.TopicRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.application.Topic;

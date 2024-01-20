@@ -1,7 +1,5 @@
 package pe.pjh.ws.adapter.out;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.Service;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseTopicRepository;
 import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseWordRepository;
@@ -13,24 +11,15 @@ import pe.pjh.ws.application.service.setting.DataSetSetting;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
 public final class DataSetManager {
 
     private static final Logger LOG = Logger.getInstance(DataSetManager.class);
 
     private final Map<String, DataSet> repositoryMap = new HashMap<>();
 
-    public static DataSetManager getInstance() {
-        return ApplicationManager.getApplication().getService(DataSetManager.class);
-    }
-
-    public static DataSet getDataSet(String dataSetName) {
-        return getInstance().repositoryMap.get(dataSetName);
-    }
-
     public DataSet makeDateSet(DataSetSetting setting) {
 
-        if(repositoryMap.containsKey(setting.getDataSetName())){
+        if (repositoryMap.containsKey(setting.getDataSetName())) {
             return repositoryMap.get(setting.getDataSetName());
         }
         DataSet dataSet = switch (setting.getSourceSetting().getDataSourceType()) {

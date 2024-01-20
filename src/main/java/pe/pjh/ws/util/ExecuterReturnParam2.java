@@ -1,9 +1,9 @@
 package pe.pjh.ws.util;
 
 @FunctionalInterface
-public interface ExecuterParam1<T1> {
+public interface ExecuterReturnParam2<T1, T2> {
     /**
      * Runs this operation.
      */
-    void execute(T1 s);
+    T1 execute(T2 t2);
 }

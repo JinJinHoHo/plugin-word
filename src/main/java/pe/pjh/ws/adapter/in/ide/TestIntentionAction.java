@@ -19,8 +19,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import pe.pjh.ws.application.service.BundleDataSet;
-import pe.pjh.ws.application.service.BundleDataSetService;
-import pe.pjh.ws.application.service.WordDicService;
+import pe.pjh.ws.application.service.BundleDataSetLoder;
+import pe.pjh.ws.application.service.WordDicMngService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -54,7 +54,7 @@ public final class TestIntentionAction implements IntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile psiFile) {
-        WordDicService service = ApplicationManager.getApplication().getService(WordDicService.class);
+        WordDicMngService service = ApplicationManager.getApplication().getService(WordDicMngService.class);
 
         try {
             service.save();
@@ -89,9 +89,9 @@ public final class TestIntentionAction implements IntentionAction {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        BundleDataSetService someService = ServiceManager.getService(BundleDataSetService.class);
+        BundleDataSetLoder someService = ServiceManager.getService(BundleDataSetLoder.class);
         try {
-            someService.loadDataSet(BundleDataSet.CMN_STN_TRM_6TH,BundleDataSet.CMN_STN_TRM_6TH.getTopic());
+            someService.load(BundleDataSet.CMN_STN_TRM_6TH,BundleDataSet.CMN_STN_TRM_6TH.getTopic());
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }

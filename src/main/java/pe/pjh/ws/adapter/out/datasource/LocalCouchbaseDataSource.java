@@ -5,7 +5,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSetType;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
-import pe.pjh.ws.util.ExecuterParam2;
+import pe.pjh.ws.util.ExecuterReturnParam2;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,15 +30,19 @@ public class LocalCouchbaseDataSource implements DataSource {
         }
     }
 
-    public Document execute(ExecuterParam2<Document, Database> executerParam2) throws Exception {
+    public Document execute(ExecuterReturnParam2<Document, Database> executerParam2) {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
+        } catch (CouchbaseLiteException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void executeBatch(ExecuterParam1<Database> executerParam2) throws Exception {
+    public void executeBatch(ExecuterParam1<Database> executerParam2) {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             executerParam2.execute(database);
+        } catch (CouchbaseLiteException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,7 +63,7 @@ public class LocalCouchbaseDataSource implements DataSource {
         CouchbaseLite.init();
 
         config = new DatabaseConfiguration();
-        config.setDirectory(sourceSetting.getPath());
+        config.setDirectory(sourceSetting.getPath().toString());
         connected = true;
         return connected;
 
@@ -74,9 +78,11 @@ public class LocalCouchbaseDataSource implements DataSource {
         //존재하고 있틑 테이블 갯수 차감.
         this.execute(database -> {
             for (DataSetType dataSetType : DataSetType.values()) {
-
-                if (database.getCollection(dataSetType.getName()) == null) continue;
-
+                try {
+                    if (database.getCollection(dataSetType.getName()) == null) continue;
+                } catch (CouchbaseLiteException e) {
+                    throw new RuntimeException(e);
+                }
                 checkCount.incrementAndGet();
             }
         });
@@ -90,20 +96,24 @@ public class LocalCouchbaseDataSource implements DataSource {
         this.execute(database -> {
             log.info("create database : " + database.getName());
 
-            Collection topicCollection = database.getCollection(DataSetType.topic.getName());
-            if (topicCollection == null) {
-                //컬렉션 생성.
-                topicCollection = database.createCollection(DataSetType.topic.getName());
-            }
+            try {
+                Collection topicCollection = database.getCollection(DataSetType.topic.getName());
+                if (topicCollection == null) {
+                    //컬렉션 생성.
+                    database.createCollection(DataSetType.topic.getName());
+                }
 
-            Collection wordCollection = database.getCollection(DataSetType.word.getName());
-            if (wordCollection == null) {
-                //컬렉션 생성.
-                wordCollection = database.createCollection(DataSetType.word.getName());
-                wordCollection.createIndex(
-                        "names",
-                        IndexBuilder.valueIndex(ValueIndexItem.property("names"))
-                );
+                Collection wordCollection = database.getCollection(DataSetType.word.getName());
+                if (wordCollection == null) {
+                    //컬렉션 생성.
+                    wordCollection = database.createCollection(DataSetType.word.getName());
+                    wordCollection.createIndex(
+                            "names",
+                            IndexBuilder.valueIndex(ValueIndexItem.property("names"))
+                    );
+                }
+            } catch (CouchbaseLiteException e) {
+                throw new RuntimeException(e);
             }
         });
     }

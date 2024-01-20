@@ -1,6 +1,5 @@
 package pe.pjh.ws.application;
 
-import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableDocument;
 
 public class Topic {
