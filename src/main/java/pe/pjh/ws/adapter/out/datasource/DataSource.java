@@ -1,5 +1,10 @@
 package pe.pjh.ws.adapter.out.datasource;
 
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
+import pe.pjh.ws.util.ExecuterParam1;
+import pe.pjh.ws.util.ExecuterParam2;
+
 /**
  * 용어 데이터소스 프로세스
  *
@@ -38,4 +43,10 @@ public interface DataSource {
      * 데이터 초기화.
      */
     void dataInit() throws Exception;
+
+    void execute(ExecuterParam1<Database> execute) throws Exception;
+
+    Document execute(ExecuterParam2<Document, Database> executerParam2) throws Exception;
+
+    void executeBatch(ExecuterParam1<Database> executerParam2) throws Exception;
 }

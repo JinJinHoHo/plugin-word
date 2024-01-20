@@ -1,5 +1,7 @@
 package pe.pjh.ws.application.service;
 
+import pe.pjh.ws.application.Topic;
+
 import java.net.URL;
 
 public enum BundleDataSet {
@@ -25,5 +27,9 @@ public enum BundleDataSet {
 
     public URL getPath() {
         return path;
+    }
+
+    public Topic getTopic() {
+        return new Topic(name, topicNo);
     }
 }

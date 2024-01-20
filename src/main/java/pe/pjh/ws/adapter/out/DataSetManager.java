@@ -18,25 +18,25 @@ public final class DataSetManager {
 
     private static final Logger LOG = Logger.getInstance(DataSetManager.class);
 
-    private final Map<String, DataSourceRepository> repositoryMap = new HashMap<>();
+    private final Map<String, DataSet> repositoryMap = new HashMap<>();
 
     public static DataSetManager getInstance() {
         return ApplicationManager.getApplication().getService(DataSetManager.class);
     }
 
-    public static TopicRepository getTopicRepository(String dataSetName) {
-        return getInstance().repositoryMap.get(dataSetName).topicRepository();
+    public static DataSet getDataSet(String dataSetName) {
+        return getInstance().repositoryMap.get(dataSetName);
     }
 
-    public static WordRepository getWordRepository(String dataSetName) {
-        return getInstance().repositoryMap.get(dataSetName).wordRepository();
-    }
+    public DataSet makeDateSet(DataSetSetting setting) {
 
-    public DataSourceRepository makeDateSet(DataSetSetting setting) {
-        DataSourceRepository dataSourceRepository = switch (setting.getSourceSetting().getDataSourceType()) {
+        if(repositoryMap.containsKey(setting.getDataSetName())){
+            return repositoryMap.get(setting.getDataSetName());
+        }
+        DataSet dataSet = switch (setting.getSourceSetting().getDataSourceType()) {
             case LocalCouchbaseLite -> {
                 DataSource ds = new LocalCouchbaseDataSource(setting.getSourceSetting());
-                yield new DataSourceRepository(
+                yield new DataSet(
                         ds,
                         new LocalCouchbaseTopicRepository(ds),
                         new LocalCouchbaseWordRepository(ds));
@@ -44,17 +44,17 @@ public final class DataSetManager {
             default -> null;
         };
 
-        if (dataSourceRepository != null) {
+        if (dataSet != null) {
             LOG.info(setting.getDataSetName() + " 초기화");
-            repositoryMap.put(setting.getDataSetName(), dataSourceRepository);
-            return dataSourceRepository;
+            repositoryMap.put(setting.getDataSetName(), dataSet);
+            return dataSet;
         }
 
         throw new WDException(setting.getDataSetName() + " 설정 오류.");
     }
 
 
-    public record DataSourceRepository(
+    public record DataSet(
             DataSource dataSource,
             TopicRepository topicRepository,
             WordRepository wordRepository) {

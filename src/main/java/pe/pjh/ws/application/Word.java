@@ -1,5 +1,8 @@
 package pe.pjh.ws.application;
 
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
+
 import java.util.List;
 import java.util.Map;
 
@@ -72,5 +75,16 @@ public class Word {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MutableDocument getDocument() {
+        return new MutableDocument(word)
+                .setInt("topicNo", topic.getTopicNo())
+                .setString("word", word)
+                .setString("englName", englName)
+                .setArray("names", new MutableArray(names.stream().map(s -> (Object)s).toList()))
+                .setString("description", description);
+
+
     }
 }

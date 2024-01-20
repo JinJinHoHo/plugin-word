@@ -1,12 +1,12 @@
 package pe.pjh.ws.adapter.out;
 
-public enum DataSet {
+public enum DataSetType {
     word("word"),
     topic("topic");
 
     final String name;
 
-    DataSet(String collection) {
+    DataSetType(String collection) {
         this.name = collection;
 
     }

@@ -1,5 +1,8 @@
 package pe.pjh.ws.application;
 
+import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableDocument;
+
 public class Topic {
 
     private String topicName;
@@ -24,5 +27,11 @@ public class Topic {
 
     public void setTopicNo(Integer topicNo) {
         this.topicNo = topicNo;
+    }
+
+    public MutableDocument getDocument() {
+        return new MutableDocument(topicNo.toString())
+                .setInt("topicNo", topicNo)
+                .setString("topicName", topicName);
     }
 }

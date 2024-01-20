@@ -91,7 +91,7 @@ public final class TestIntentionAction implements IntentionAction {
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         BundleDataSetService someService = ServiceManager.getService(BundleDataSetService.class);
         try {
-            someService.loadDataSet(BundleDataSet.CMN_STN_TRM_6TH);
+            someService.loadDataSet(BundleDataSet.CMN_STN_TRM_6TH,BundleDataSet.CMN_STN_TRM_6TH.getTopic());
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
