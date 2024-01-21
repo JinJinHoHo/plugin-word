@@ -4,9 +4,10 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSetManager;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
-import pe.pjh.ws.application.Topic;
-import pe.pjh.ws.application.WDException;
-import pe.pjh.ws.application.Word;
+import pe.pjh.ws.application.service.dataset.Topic;
+import pe.pjh.ws.application.service.dataset.Word;
+import pe.pjh.ws.application.service.dataset.BundleDataSet;
+import pe.pjh.ws.application.service.dataset.BundleDataSetLoder;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.application.service.setting.SettingService;
 
@@ -15,9 +16,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
 
-public class AppInitialize {
+public class AppInitializer {
 
-    private static final Logger LOG = Logger.getInstance(AppInitialize.class);
+    private static final Logger LOG = Logger.getInstance(AppInitializer.class);
 
     SettingService settingService;
 
@@ -26,20 +27,20 @@ public class AppInitialize {
     DataSetManager dataSetManager;
 
 
-    public AppInitialize(SettingService settingService,
-                         DataSetManager dataSetManager,
-                         StatusService statusService
+    public AppInitializer(SettingService settingService,
+                          DataSetManager dataSetManager,
+                          StatusService statusService
     ) {
         this.settingService = settingService;
         this.dataSetManager = dataSetManager;
         this.statusService = statusService;
     }
 
-    public void init() {
-        if (isPluginInitialize()) {
-            pluginInit();
+    public void startUp() {
+        if (isInitDirectory()) {
+            initDirectory();
         }
-        pluginStartUp();
+        initDataSet();
     }
 
     /**
@@ -48,7 +49,7 @@ public class AppInitialize {
      *
      * @return
      */
-    private boolean isPluginInitialize() {
+    private boolean isInitDirectory() {
         return !Files.exists(statusService.getWorkPath());
     }
 
@@ -56,7 +57,7 @@ public class AppInitialize {
      * 플러그인 초기화.
      * <p>디렉토리 생성 작업.<p/>
      */
-    private void pluginInit() {
+    private void initDirectory() {
         if (Files.exists(statusService.getWorkPath())) return;
 
         try {
@@ -71,7 +72,7 @@ public class AppInitialize {
      * 플러그인 스타트업
      * <p>ide 실행후 초기화 실행, 데이터셋 관련 정보 처리가 주로직.</p>
      */
-    private void pluginStartUp() {
+    private void initDataSet() {
 
         if (!Files.isWritable(statusService.getWorkPath())) {
             LOG.warn(statusService.getWorkPath() + " 디렉토리 권한 없음.");
@@ -81,29 +82,24 @@ public class AppInitialize {
         //데이터 소스 설정
         DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
         DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
-        try {
-            DataSource dataSource = dataSet.dataSource();
 
-            if (!dataSource.isConnection()) {
-                if (!dataSource.connection()) {
-                    throw new WDException(dataSource.getDataSourceName() + "이 설정된 데이터 소스에 연결 또는 접근 안됨.");
-                }
+        DataSource dataSource = dataSet.dataSource();
+
+        if (!dataSource.isConnection()) {
+            if (!dataSource.connection()) {
+                throw new WDException(dataSource.getDataSourceName() + "이 설정된 데이터 소스에 연결 또는 접근 안됨.");
             }
-
-            if (!dataSource.isDataInit()) dataSource.dataInit();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
 
         try {
-            setupBundleDataset(dataSetSetting, BundleDataSet.CMN_STN_TRM_6TH);
+            if (!dataSource.isDataInit()) dataSource.dataInit();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    private void setupBundleDataset(DataSetSetting dataSetSetting, BundleDataSet bundleDataSet) throws Exception {
+    public void setupBundleDataset(BundleDataSet bundleDataSet) {
 
         Topic topic = bundleDataSet.getTopic();
         List<Word> words;
@@ -111,22 +107,20 @@ public class AppInitialize {
             words = BundleDataSetLoder.load(bundleDataSet, topic);
         } catch (URISyntaxException | IOException e) {
             LOG.info(bundleDataSet + " 설정된 리소스 오류.", e);
-            throw new WDException(bundleDataSet + " 설정된 리소스 오류.");
+            throw new WDException(bundleDataSet + " 설정된 리소스 오류.", e);
         }
 
-        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
-        dataSet.dataSource()
-                .executeBatch(database -> {
-                            try {
-                                database.inBatch(() -> {
-                                            dataSet.topicRepository().createTopic(database, topic);
-                                            dataSet.wordRepository().createWords(database, words);
-                                        });
-                            } catch (CouchbaseLiteException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                );
-
+        try {
+            DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
+            DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
+            dataSet.dataSource()
+                    .executeBatch(database -> database.inBatch(() -> {
+                                dataSet.topicRepository().createTopic(database, topic);
+                                dataSet.wordRepository().createWords(database, words);
+                            })
+                    );
+        } catch (CouchbaseLiteException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,7 +1,5 @@
 package pe.pjh.ws.application.service.setting;
 
-import pe.pjh.ws.application.service.SourceType;
-
 import java.nio.file.Path;
 
 public class DataSetSetting {

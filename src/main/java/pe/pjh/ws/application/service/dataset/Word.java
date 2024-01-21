@@ -1,4 +1,4 @@
-package pe.pjh.ws.application;
+package pe.pjh.ws.application.service.dataset;
 
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
@@ -22,13 +22,14 @@ public class Word {
 
     private String description;
 
-    public Word(Topic topic, Map<String,Object> map) {
+    public Word(Topic topic, Map<String, Object> map) {
         this.topic = topic;
         this.word = (String) map.get("word");
         this.englName = (String) map.get("engl_name");
         this.names = (List<String>) map.get("name");
         this.description = (String) map.get("description");
     }
+
     public Word(Topic topic, String word, String englName, List<String> names, String description) {
         this.topic = topic;
         this.word = word;
@@ -79,12 +80,20 @@ public class Word {
 
     public MutableDocument getDocument() {
         return new MutableDocument(word)
-                .setInt("topicNo", topic.getTopicNo())
-                .setString("word", word)
-                .setString("englName", englName)
-                .setArray("names", new MutableArray(names.stream().map(s -> (Object)s).toList()))
-                .setString("description", description);
+                .setInt(Property.topicNo.name(), topic.getTopicNo())
+                .setString(Property.word.name(), word)
+                .setString(Property.englName.name(), englName)
+                .setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList()))
+                .setString(Property.description.name(), description);
 
 
+    }
+
+    public enum Property {
+        topicNo,
+        word,
+        englName,
+        names,
+        description
     }
 }

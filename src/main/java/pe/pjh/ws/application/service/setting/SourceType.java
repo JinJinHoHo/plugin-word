@@ -1,4 +1,4 @@
-package pe.pjh.ws.application.service;
+package pe.pjh.ws.application.service.setting;
 
 public enum SourceType {
     LocalCouchbaseLite,

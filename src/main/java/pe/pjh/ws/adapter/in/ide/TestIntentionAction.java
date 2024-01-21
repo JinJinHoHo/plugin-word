@@ -18,9 +18,9 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import pe.pjh.ws.application.service.BundleDataSet;
-import pe.pjh.ws.application.service.BundleDataSetLoder;
-import pe.pjh.ws.application.service.WordDicMngService;
+import pe.pjh.ws.application.service.dataset.BundleDataSet;
+import pe.pjh.ws.application.service.dataset.BundleDataSetLoder;
+import pe.pjh.ws.application.service.dataset.WordDicMngService;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -54,13 +54,13 @@ public final class TestIntentionAction implements IntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile psiFile) {
-        WordDicMngService service = ApplicationManager.getApplication().getService(WordDicMngService.class);
+        //WordDicMngService service = ApplicationManager.getApplication().getService(WordDicMngService.class);
 
-        try {
-            service.save();
-        } catch (CouchbaseLiteException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//           // service.save();
+//        } catch (CouchbaseLiteException e) {
+//            throw new RuntimeException(e);
+//        }
         PsiElement psiElement = PsiUtilBase.getElementAtCaret(editor);
 
         PsiDocComment psiDocComment;

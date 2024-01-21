@@ -30,7 +30,7 @@ public class LocalCouchbaseDataSource implements DataSource {
         }
     }
 
-    public Document execute(ExecuterReturnParam2<Document, Database> executerParam2) {
+    public Document execute(ExecuterReturnParam2<Database, Document> executerParam2) {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
         } catch (CouchbaseLiteException e) {
@@ -38,11 +38,15 @@ public class LocalCouchbaseDataSource implements DataSource {
         }
     }
 
-    public void executeBatch(ExecuterParam1<Database> executerParam2) {
+    public void executeBatch(ExecuterParam1<Database> executerParam2) throws CouchbaseLiteException {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             executerParam2.execute(database);
-        } catch (CouchbaseLiteException e) {
-            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws CouchbaseLiteException {
+        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
+            return executerParam2.execute(database);
         }
     }
 

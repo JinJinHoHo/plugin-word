@@ -5,7 +5,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import pe.pjh.ws.adapter.out.TopicRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
-import pe.pjh.ws.application.Topic;
+import pe.pjh.ws.application.service.dataset.Topic;
 
 
 public class LocalCouchbaseTopicRepository implements TopicRepository {

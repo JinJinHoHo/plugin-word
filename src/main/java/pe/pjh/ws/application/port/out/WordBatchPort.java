@@ -2,7 +2,7 @@ package pe.pjh.ws.application.port.out;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import pe.pjh.ws.application.Word;
+import pe.pjh.ws.application.service.dataset.Word;
 
 import java.util.List;
 

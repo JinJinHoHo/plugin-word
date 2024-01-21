@@ -1,5 +1,6 @@
 package pe.pjh.ws.adapter.out.datasource;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import pe.pjh.ws.util.ExecuterParam1;
@@ -46,7 +47,9 @@ public interface DataSource {
 
     void execute(ExecuterParam1<Database> execute) throws Exception;
 
-    Document execute(ExecuterReturnParam2<Document, Database> executerParam2) throws Exception;
+    Document execute(ExecuterReturnParam2<Database, Document> executerParam2) throws Exception;
 
-    void executeBatch(ExecuterParam1<Database> executerParam2) throws Exception;
+    void executeBatch(ExecuterParam1<Database> executerParam2) throws CouchbaseLiteException;
+
+    <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws CouchbaseLiteException;
 }

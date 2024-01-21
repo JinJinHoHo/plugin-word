@@ -1,5 +1,6 @@
 package pe.pjh.ws.application.service;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 
@@ -29,7 +30,11 @@ public class StatusService {
 
     public void setCurrentDataSetSetting(DataSetSetting currentDataSetSetting) {
         this.currentDataSetSetting = currentDataSetSetting;
-        changeDataSetSettingEvent.execute(this.currentDataSetSetting);
+        try {
+            changeDataSetSettingEvent.execute(this.currentDataSetSetting);
+        } catch (CouchbaseLiteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Path getWorkPath() {

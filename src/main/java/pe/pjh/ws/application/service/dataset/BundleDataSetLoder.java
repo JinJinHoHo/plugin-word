@@ -1,8 +1,6 @@
-package pe.pjh.ws.application.service;
+package pe.pjh.ws.application.service.dataset;
 
 import com.google.gson.Gson;
-import pe.pjh.ws.application.Topic;
-import pe.pjh.ws.application.Word;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
