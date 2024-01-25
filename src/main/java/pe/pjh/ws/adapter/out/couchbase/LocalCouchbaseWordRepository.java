@@ -1,14 +1,12 @@
 package pe.pjh.ws.adapter.out.couchbase;
 
 import com.couchbase.lite.*;
+import com.couchbase.lite.Collection;
 import pe.pjh.ws.adapter.out.WordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.application.service.dataset.Word;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,8 +52,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
         Collection collection = getCollection(database);
         ResultSet results = QueryBuilder
                 .select(
-//                        SelectResult.all(),
-                        SelectResult.property(Word.Property.word.name()),
+                        SelectResult.property(Word.Property.wordText.name()),
                         SelectResult.property(Word.Property.names.name())
                 )
                 .from(collection(collection))
@@ -74,13 +71,13 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                 .execute();
 
         Map<String, String> map = new HashMap<>();
-        results.allResults().forEach(result -> {
-            Dictionary dictionary = result.getDictionary("word");
-            String word = dictionary.getString("word");
-            dictionary.getArray("names")
-                    .toList()
-                    .forEach(o -> map.put((String) o, word));
-        });
+        results.allResults()
+                .forEach(result -> {
+                    String word = result.getString(Word.Property.wordText.name());
+                    result.getArray(Word.Property.names.name())
+                            .toList()
+                            .forEach(o -> map.put((String) o, word));
+                });
 
         return Stream.of(docWords)
                 .map(s -> map.getOrDefault(s, ""))
@@ -89,41 +86,40 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
 
 
     @Override
-    public List<List> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException {
+    public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException {
 
 
         Collection collection = getCollection(database);
+
         ResultSet results = QueryBuilder
                 .select(
-//                        SelectResult.all(),
-                        SelectResult.property(Word.Property.word.name()),
+                        SelectResult.property(Word.Property.wordText.name()),
                         SelectResult.property(Word.Property.names.name())
                 )
                 .from(collection(collection))
                 .where(
-                        Expression
-                                .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
-                                .in(Stream.of(sourceWords)
-                                        .map(s -> ArrayFunction.contains(
-                                                        Expression.property(Word.Property.names.name()),
-                                                        Expression.string(s)
-                                                )
+                        Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                                .and(Expression.property(Word.Property.wordText.name())
+                                        .in(Stream.of(sourceWords)
+                                                .map(Expression::string)
+                                                .toArray(value -> new Expression[sourceWords.length])
                                         )
-                                        .toArray(value -> new Expression[sourceWords.length])
                                 )
                 )
                 .execute();
 
-        Map<String, List<Object>> map = results.allResults().stream()
-                .collect(Collectors.toMap(result -> {
-                    Dictionary dictionary = result.getDictionary("word");
-                    return dictionary.getString("word");
-                }, result -> {
-                    Dictionary dictionary = result.getDictionary("word");
-                    return dictionary.getArray("names").toList();
-                }));
+        Map<String, List<String>> map = results.allResults().stream()
+                .collect(Collectors.toMap(
+                                dictionary -> dictionary.getString(Word.Property.wordText.name()),
+                                dictionary -> dictionary.getArray(Word.Property.names.name())
+                                        .toList()
+                                        .stream().map(o -> (String) o).toList()
+                        )
+                );
 
-        return Stream.of(sourceWords).map(s -> map.getOrDefault(s, Collections.EMPTY_LIST)).collect(Collectors.toList());
+        return Stream.of(sourceWords)
+                .map(s -> map.getOrDefault(s, new ArrayList<>()))
+                .collect(Collectors.toList());
     }
 
     @Override

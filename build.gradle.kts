@@ -11,7 +11,7 @@ repositories {
     mavenCentral()
 //    maven {
 //        url = uri("https://www.jetbrains.com/intellij-repository/releases")
-//    }
+//    }    ./
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -26,6 +26,10 @@ intellij {
 dependencies{
     implementation("com.couchbase.lite:couchbase-lite-java:3.1.3")
     implementation("com.google.code.gson:gson:2.10.1")
+
+    //couchbase-lite-java 취약종속성으로 추가.
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okio:okio:3.7.0")
 
     testImplementation(platform("org.junit:junit-bom:5.10.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

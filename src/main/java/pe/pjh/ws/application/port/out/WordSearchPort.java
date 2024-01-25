@@ -9,6 +9,6 @@ public interface WordSearchPort {
 
     List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) throws CouchbaseLiteException;
 
-    List<List> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException;
+    List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException;
 
 }

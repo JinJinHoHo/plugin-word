@@ -79,19 +79,18 @@ public class Word {
     }
 
     public MutableDocument getDocument() {
-        return new MutableDocument(word)
+        return new MutableDocument("%d_%s".formatted(topic.getTopicNo(), word))
                 .setInt(Property.topicNo.name(), topic.getTopicNo())
-                .setString(Property.word.name(), word)
+                .setString(Property.wordText.name(), word)
                 .setString(Property.englName.name(), englName)
                 .setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList()))
                 .setString(Property.description.name(), description);
-
 
     }
 
     public enum Property {
         topicNo,
-        word,
+        wordText,
         englName,
         names,
         description

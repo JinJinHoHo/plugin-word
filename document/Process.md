@@ -63,6 +63,8 @@
 ```mermaid
 classDiagram
 
+        
+
   namespace application_service {
       
     class 데이터_초기화{
