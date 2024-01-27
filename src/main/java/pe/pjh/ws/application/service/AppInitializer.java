@@ -1,13 +1,13 @@
 package pe.pjh.ws.application.service;
 
-import com.couchbase.lite.CouchbaseLiteException;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSetManager;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
-import pe.pjh.ws.application.service.dataset.Topic;
-import pe.pjh.ws.application.service.dataset.Word;
+import pe.pjh.ws.application.exception.WDException;
 import pe.pjh.ws.application.service.dataset.BundleDataSet;
 import pe.pjh.ws.application.service.dataset.BundleDataSetLoder;
+import pe.pjh.ws.application.service.dataset.Topic;
+import pe.pjh.ws.application.service.dataset.Word;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.application.service.setting.SettingService;
 
@@ -110,17 +110,14 @@ public class AppInitializer {
             throw new WDException(bundleDataSet + " 설정된 리소스 오류.", e);
         }
 
-        try {
-            DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
-            DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
-            dataSet.dataSource()
-                    .executeBatch(database -> database.inBatch(() -> {
-                                dataSet.topicRepository().createTopic(database, topic);
-                                dataSet.wordRepository().createWords(database, words);
-                            })
-                    );
-        } catch (CouchbaseLiteException e) {
-            throw new RuntimeException(e);
-        }
+        DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
+        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
+        dataSet.dataSource()
+                .executeBatch(database -> database.inBatch(() -> {
+                            dataSet.topicRepository().createTopic(database, topic);
+                            dataSet.wordRepository().createWords(database, words);
+                        })
+                );
+
     }
 }

@@ -3,6 +3,7 @@ package pe.pjh.ws.adapter.out.datasource;
 import com.couchbase.lite.*;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSetType;
+import pe.pjh.ws.application.exception.QueryException;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 import pe.pjh.ws.util.ExecuterReturnParam2;
@@ -24,9 +25,11 @@ public class LocalCouchbaseDataSource implements DataSource {
     }
 
 
-    public void execute(ExecuterParam1<Database> execute) throws Exception {
+    public void execute(ExecuterParam1<Database> execute) throws QueryException {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             execute.execute(database);
+        }catch (CouchbaseLiteException e) {
+            throw new QueryException(e);
         }
     }
 
@@ -34,19 +37,23 @@ public class LocalCouchbaseDataSource implements DataSource {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
         } catch (CouchbaseLiteException e) {
-            throw new RuntimeException(e);
+            throw new QueryException(e);
         }
     }
 
-    public void executeBatch(ExecuterParam1<Database> executerParam2) throws CouchbaseLiteException {
+    public void executeBatch(ExecuterParam1<Database> executerParam2) throws QueryException {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             executerParam2.execute(database);
+        }catch (CouchbaseLiteException e) {
+            throw new QueryException(e);
         }
     }
 
-    public <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws CouchbaseLiteException {
+    public <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws QueryException {
         try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
+        } catch (CouchbaseLiteException e) {
+            throw new QueryException(e);
         }
     }
 

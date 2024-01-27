@@ -1,6 +1,7 @@
 package pe.pjh.ws.application.service;
 
 import com.couchbase.lite.CouchbaseLiteException;
+import pe.pjh.ws.application.service.dataset.BundleDataSet;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 
@@ -10,6 +11,8 @@ public class StatusService {
 
     private final Path workPath;
     private DataSetSetting currentDataSetSetting;
+
+    private final Integer currentTopicId = BundleDataSet.CMN_STN_TRM_6TH.getTopicNo();
 
     private final ExecuterParam1<DataSetSetting> changeDataSetSettingEvent;
 
@@ -39,5 +42,10 @@ public class StatusService {
 
     public Path getWorkPath() {
         return workPath;
+    }
+
+
+    public Integer getCurrentTopicId() {
+        return currentTopicId;
     }
 }

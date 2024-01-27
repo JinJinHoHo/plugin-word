@@ -1,4 +1,4 @@
-package pe.pjh.ws.application.service;
+package pe.pjh.ws.application.exception;
 
 public class WDException extends RuntimeException{
 

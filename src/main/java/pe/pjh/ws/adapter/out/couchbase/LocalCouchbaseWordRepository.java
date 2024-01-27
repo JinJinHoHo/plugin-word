@@ -1,12 +1,15 @@
 package pe.pjh.ws.adapter.out.couchbase;
 
 import com.couchbase.lite.*;
-import com.couchbase.lite.Collection;
 import pe.pjh.ws.adapter.out.WordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
+import pe.pjh.ws.application.exception.DataSourceException;
 import pe.pjh.ws.application.service.dataset.Word;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,95 +34,108 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     }
 
     @Override
-    public Integer countWordByTopic(Database database, Integer topicNo) throws CouchbaseLiteException {
+    public Integer countWordByTopic(Database database, Integer topicNo){
 
-        Collection collection = getCollection(database);
+        try (Collection collection = getCollection(database);
+             ResultSet results = QueryBuilder
+                     .select(SelectResult.expression(Function.count(Expression.string("*"))).as("count"))
+                     .from(collection(collection))
+                     .where(Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo)))
+                     .execute()
+        ) {
+            Result result = results.next();
+            return result == null ? 0 : result.getInt("count");
+        }catch (CouchbaseLiteException e){
+            throw new DataSourceException(e);
+        }
+    }
 
-        ResultSet results = QueryBuilder
-                .select(SelectResult.expression(Function.count(Expression.string("*"))).as("count"))
-                .from(collection(collection))
-                .where(Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo)))
-                .execute();
-
-        Result result = results.next();
-        return result.getInt("count");
+    @Override
+    public List<Word> findByTopic(Database database, Integer Topic) {
+        return null;
     }
 
     @Override
     public List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) throws CouchbaseLiteException {
 
 
-        Collection collection = getCollection(database);
-        ResultSet results = QueryBuilder
-                .select(
-                        SelectResult.property(Word.Property.wordText.name()),
-                        SelectResult.property(Word.Property.names.name())
-                )
-                .from(collection(collection))
-                .where(
-                        Expression
-                                .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
-                                .in(Stream.of(docWords)
-                                        .map(s -> ArrayFunction.contains(
-                                                        Expression.property(Word.Property.names.name()),
-                                                        Expression.string(s)
-                                                )
-                                        )
-                                        .toArray(value -> new Expression[docWords.length])
-                                )
-                )
-                .execute();
+        try (Collection collection = getCollection(database);
+             ResultSet results = QueryBuilder
+                     .select(
+                             SelectResult.property(Word.Property.wordText.name()),
+                             SelectResult.property(Word.Property.names.name())
+                     )
+                     .from(collection(collection))
+                     .where(
+                             Expression
+                                     .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                                     .in(Stream.of(docWords)
+                                             .map(s -> ArrayFunction.contains(
+                                                             Expression.property(Word.Property.names.name()),
+                                                             Expression.string(s)
+                                                     )
+                                             )
+                                             .toArray(value -> new Expression[docWords.length])
+                                     )
+                     )
+                     .execute()
+        ) {
 
-        Map<String, String> map = new HashMap<>();
-        results.allResults()
-                .forEach(result -> {
-                    String word = result.getString(Word.Property.wordText.name());
-                    result.getArray(Word.Property.names.name())
-                            .toList()
-                            .forEach(o -> map.put((String) o, word));
-                });
+            Map<String, String> map = new HashMap<>();
+            results.allResults()
+                    .forEach(result -> {
+                        String word = result.getString(Word.Property.wordText.name());
+                        Array array = result.getArray(Word.Property.names.name());
+                        if (array != null) array.toList()
+                                .forEach(o -> map.put((String) o, word));
 
-        return Stream.of(docWords)
-                .map(s -> map.getOrDefault(s, ""))
-                .collect(Collectors.toList());
+                    });
+
+            return Stream.of(docWords)
+                    .map(s -> map.getOrDefault(s, ""))
+                    .collect(Collectors.toList());
+        }
     }
 
 
     @Override
     public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException {
 
+        try (Collection collection = getCollection(database);
+             ResultSet results = QueryBuilder
+                     .select(
+                             SelectResult.property(Word.Property.wordText.name()),
+                             SelectResult.property(Word.Property.names.name())
+                     )
+                     .from(collection(collection))
+                     .where(
+                             Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                                     .and(Expression.property(Word.Property.wordText.name())
+                                             .in(Stream.of(sourceWords)
+                                                     .map(Expression::string)
+                                                     .toArray(value -> new Expression[sourceWords.length])
+                                             )
+                                     )
+                     )
+                     .execute()
+        ) {
 
-        Collection collection = getCollection(database);
+            Map<String, List<String>> map = results.allResults().stream()
+                    .collect(Collectors.toMap(
+                                    dictionary -> dictionary.getString(Word.Property.wordText.name()),
+                                    dictionary -> {
+                                        Array array = dictionary.getArray(Word.Property.names.name());
+                                        return (array == null ? new ArrayList<>() : array.toList())
+                                                .stream().map(o -> (String) o).toList();
+                                    }
+                            )
+                    );
 
-        ResultSet results = QueryBuilder
-                .select(
-                        SelectResult.property(Word.Property.wordText.name()),
-                        SelectResult.property(Word.Property.names.name())
-                )
-                .from(collection(collection))
-                .where(
-                        Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
-                                .and(Expression.property(Word.Property.wordText.name())
-                                        .in(Stream.of(sourceWords)
-                                                .map(Expression::string)
-                                                .toArray(value -> new Expression[sourceWords.length])
-                                        )
-                                )
-                )
-                .execute();
+            return Stream.of(sourceWords)
+                    .map(s -> map.getOrDefault(s, new ArrayList<>()))
+                    .collect(Collectors.toList());
 
-        Map<String, List<String>> map = results.allResults().stream()
-                .collect(Collectors.toMap(
-                                dictionary -> dictionary.getString(Word.Property.wordText.name()),
-                                dictionary -> dictionary.getArray(Word.Property.names.name())
-                                        .toList()
-                                        .stream().map(o -> (String) o).toList()
-                        )
-                );
-
-        return Stream.of(sourceWords)
-                .map(s -> map.getOrDefault(s, new ArrayList<>()))
-                .collect(Collectors.toList());
+        }
     }
 
     @Override

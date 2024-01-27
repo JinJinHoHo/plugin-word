@@ -5,7 +5,7 @@ import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseTopicRepository;
 import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseWordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.adapter.out.datasource.LocalCouchbaseDataSource;
-import pe.pjh.ws.application.service.WDException;
+import pe.pjh.ws.application.exception.WDException;
 import pe.pjh.ws.application.service.setting.DataSetSetting;
 
 import java.util.HashMap;

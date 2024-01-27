@@ -36,6 +36,14 @@ public final class AppService {
      */
     public AppService() {
         this(Path.of(PathManager.getPluginsPath()));
+
+        AppInitializer initializer = this.getInitializer();
+
+        //어플 초기화.
+        initializer.startUp();
+
+        //테스트용 번들 데이터 설치.
+        initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
     }
 
     /**

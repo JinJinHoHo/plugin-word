@@ -2,9 +2,11 @@ package pe.pjh.ws.application.service.dataset;
 
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /*
  "word": "RAFOS",
@@ -28,6 +30,15 @@ public class Word {
         this.englName = (String) map.get("engl_name");
         this.names = (List<String>) map.get("name");
         this.description = (String) map.get("description");
+
+        //번틀 데이터에 synonym 있어 임시용으로 만듬.
+        String synonym = (String) map.get("synonym");
+        if(StringUtils.isNotBlank(synonym)){
+            this.names.addAll(Stream.of(synonym.split(","))
+                    .map(String::trim)
+                    .toList());
+        }
+
     }
 
     public Word(Topic topic, String word, String englName, List<String> names, String description) {

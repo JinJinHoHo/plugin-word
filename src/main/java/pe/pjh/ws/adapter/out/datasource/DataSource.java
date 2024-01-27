@@ -1,8 +1,8 @@
 package pe.pjh.ws.adapter.out.datasource;
 
-import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import pe.pjh.ws.application.exception.QueryException;
 import pe.pjh.ws.util.ExecuterParam1;
 import pe.pjh.ws.util.ExecuterReturnParam2;
 
@@ -45,11 +45,11 @@ public interface DataSource {
      */
     void dataInit() throws Exception;
 
-    void execute(ExecuterParam1<Database> execute) throws Exception;
+    void execute(ExecuterParam1<Database> execute) throws QueryException;
 
-    Document execute(ExecuterReturnParam2<Database, Document> executerParam2) throws Exception;
+    Document execute(ExecuterReturnParam2<Database, Document> executerParam2) throws QueryException;
 
-    void executeBatch(ExecuterParam1<Database> executerParam2) throws CouchbaseLiteException;
+    void executeBatch(ExecuterParam1<Database> executerParam2) throws QueryException;
 
-    <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws CouchbaseLiteException;
+    <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws QueryException;
 }

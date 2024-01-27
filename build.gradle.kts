@@ -1,7 +1,7 @@
 plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.9.21"
-    id("org.jetbrains.intellij") version "1.16.1"
+    id("org.jetbrains.intellij") version "1.17.0"
 }
 
 group = "pe.pjh"
@@ -18,7 +18,7 @@ repositories {
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
     version.set("2023.1.5")
-    type.set("IC") // Target IDE Platform
+ //   type.set("IC") // Target IDE Platform
 
     plugins.set(listOf("com.intellij.java"))
 }
@@ -47,7 +47,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("231")
-        untilBuild.set("241.*")
+        untilBuild.set("233.*")
     }
 
     signPlugin {
