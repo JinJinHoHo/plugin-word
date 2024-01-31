@@ -4,6 +4,7 @@ import com.couchbase.lite.*;
 import pe.pjh.ws.adapter.out.WordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.application.exception.DataSourceException;
+import pe.pjh.ws.application.service.dataset.Pagination;
 import pe.pjh.ws.application.service.dataset.Word;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     }
 
     @Override
-    public Integer countWordByTopic(Database database, Integer topicNo){
+    public Integer countWordByTopic(Database database, Integer topicNo) {
 
         try (Collection collection = getCollection(database);
              ResultSet results = QueryBuilder
@@ -45,18 +46,38 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
         ) {
             Result result = results.next();
             return result == null ? 0 : result.getInt("count");
-        }catch (CouchbaseLiteException e){
+        } catch (CouchbaseLiteException e) {
             throw new DataSourceException(e);
         }
     }
 
     @Override
-    public List<Word> findByTopic(Database database, Integer Topic) {
-        return null;
+    public List<Word> findByTopic(Database database, Integer topicNo, Pagination pagination) {
+        try (Collection collection = getCollection(database);
+             ResultSet results = QueryBuilder
+                     .select(
+                             SelectResult.all()
+                     )
+                     .from(collection(collection))
+                     .where(
+                             Expression
+                                     .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                     )
+                     .limit(
+                             Expression.intValue(pagination.getPageSize()),
+                             Expression.intValue(pagination.getPageSize() * pagination.getPageNumber())
+                     )
+                     .execute()
+        ) {
+            return results.allResults()
+                    .stream().map(Word::new).toList();
+        } catch (CouchbaseLiteException e) {
+            throw new DataSourceException(e);
+        }
     }
 
     @Override
-    public List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) throws CouchbaseLiteException {
+    public List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) {
 
 
         try (Collection collection = getCollection(database);
@@ -94,12 +115,14 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
             return Stream.of(docWords)
                     .map(s -> map.getOrDefault(s, ""))
                     .collect(Collectors.toList());
+        } catch (CouchbaseLiteException e) {
+            throw new DataSourceException(e);
         }
     }
 
 
     @Override
-    public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) throws CouchbaseLiteException {
+    public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) {
 
         try (Collection collection = getCollection(database);
              ResultSet results = QueryBuilder
@@ -135,6 +158,8 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                     .map(s -> map.getOrDefault(s, new ArrayList<>()))
                     .collect(Collectors.toList());
 
+        } catch (CouchbaseLiteException e) {
+            throw new DataSourceException(e);
         }
     }
 

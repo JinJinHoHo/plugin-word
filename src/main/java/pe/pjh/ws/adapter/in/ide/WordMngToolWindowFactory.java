@@ -14,22 +14,11 @@ public final class WordMngToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
-
-
+        WordMng wordMng = new WordMng();
         Content content = ContentFactory.getInstance()
-                .createContent(new WordMng(), "", false);
+                .createContent(wordMng.getBasePanel(), "", false);
 
         toolWindow.getContentManager()
                 .addContent(content);
-    }
-
-    private JPanel createPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel("Hello, world!");
-        JButton button = new JButton("Click me!");
-        button.addActionListener(e -> label.setText("Button clicked!"));
-        panel.add(label, BorderLayout.CENTER);
-        panel.add(button, BorderLayout.SOUTH);
-        return panel;
     }
 }

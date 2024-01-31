@@ -166,25 +166,4 @@ public final class ClassSrcNameSuggIntentionAction implements IntentionAction {
 
         return titleLine.substring(1);
     }
-
-/*
-    class ClassRenameDialog extends RenameDialog {
-
-        String suggestedName;
-
-        public ClassRenameDialog(@NotNull Project project, @NotNull PsiElement psiElement, @Nullable PsiElement nameSuggestionContext,
-                                 Editor editor, String suggestedName) {
-            super(project, psiElement, nameSuggestionContext, editor);
-            this.suggestedName = suggestedName;
-        }
-
-//        public ClassRenameDialog(Project project, PsiElement psiElement, PsiElement nameSuggestionContext, Editor editor) {
-//            super(project, psiElement, nameSuggestionContext, editor);
-//        }
-
-        @Override
-        public String[] getSuggestedNames() {
-            return List.of(suggestedName).toArray(String[]::new);
-        }
-    }*/
 }

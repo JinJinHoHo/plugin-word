@@ -1,16 +1,13 @@
 package pe.pjh.ws.application.service.dataset;
 
 import com.couchbase.lite.CouchbaseLiteException;
-import com.google.common.reflect.TypeToken;
 import pe.pjh.ws.adapter.out.DataSetManager;
 import pe.pjh.ws.application.exception.QueryException;
 import pe.pjh.ws.application.port.out.TopicSearchPort;
 import pe.pjh.ws.application.port.out.WordSearchPort;
 import pe.pjh.ws.application.service.StatusService;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TermSuggestService extends AbstractDataSourceService {
@@ -36,13 +33,7 @@ public class TermSuggestService extends AbstractDataSourceService {
         String[] documentWords = documentName.split(" ");
 
         List<String> wordList = getDataSource()
-                .execute(database -> {
-                    try {
-                        return wordSearchPort.requestSourceName(database, topicNo, documentWords);
-                    } catch (CouchbaseLiteException e) {
-                        throw new RuntimeException(e);
-                    }
-                }, List.class);
+                .execute(database -> wordSearchPort.requestSourceName(database, topicNo, documentWords), List.class);
         return notation.convert(wordList);
     }
 
@@ -58,13 +49,7 @@ public class TermSuggestService extends AbstractDataSourceService {
                 .split(" ");
 
         List<List<String>> wordList = getDataSource()
-                .execute(database -> {
-                    try {
-                        return wordSearchPort.requestDocumentName(database, topicNo, split);
-                    } catch (CouchbaseLiteException e) {
-                        throw new QueryException(e);
-                    }
-                }, List.class);
+                .execute(database -> wordSearchPort.requestDocumentName(database, topicNo, split), List.class);
 
 
         return wordList.stream()

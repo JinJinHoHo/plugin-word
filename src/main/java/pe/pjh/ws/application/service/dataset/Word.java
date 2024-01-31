@@ -1,11 +1,13 @@
 package pe.pjh.ws.application.service.dataset;
 
-import com.couchbase.lite.MutableArray;
-import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.*;
+import com.intellij.icons.AllIcons;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -16,7 +18,7 @@ import java.util.stream.Stream;
  */
 public class Word {
 
-    private Topic topic;
+    private Integer topicNo;
     private String word;
     private String englName;
 
@@ -24,8 +26,25 @@ public class Word {
 
     private String description;
 
+
+    public Word(Result result) {
+        Dictionary dictionary = result.getDictionary("word");
+
+        this.topicNo = null;
+        this.word = dictionary.getString(Property.wordText.name());
+        this.englName = dictionary.getString(Property.englName.name());
+        Array array = dictionary.getArray(Word.Property.names.name());
+        if (array != null) {
+            this.names = array.toList().stream().map(Object::toString).collect(Collectors.toList());
+        } else {
+            this.names = new ArrayList<>();
+        }
+
+        this.description = dictionary.getString(Property.description.name());
+    }
+
     public Word(Topic topic, Map<String, Object> map) {
-        this.topic = topic;
+        this.topicNo = topic.getTopicNo();
         this.word = (String) map.get("word");
         this.englName = (String) map.get("engl_name");
         this.names = (List<String>) map.get("name");
@@ -33,28 +52,26 @@ public class Word {
 
         //번틀 데이터에 synonym 있어 임시용으로 만듬.
         String synonym = (String) map.get("synonym");
-        if(StringUtils.isNotBlank(synonym)){
-            this.names.addAll(Stream.of(synonym.split(","))
-                    .map(String::trim)
-                    .toList());
+        if (StringUtils.isNotBlank(synonym)) {
+            this.names.addAll(Stream.of(synonym.split(",")).map(String::trim).toList());
         }
 
     }
 
     public Word(Topic topic, String word, String englName, List<String> names, String description) {
-        this.topic = topic;
+        this.topicNo = topic.getTopicNo();
         this.word = word;
         this.englName = englName;
         this.names = names;
         this.description = description;
     }
 
-    public Topic getTopic() {
-        return topic;
+    public Integer getTopicNo() {
+        return topicNo;
     }
 
-    public void setTopic(Topic topic) {
-        this.topic = topic;
+    public void setTopicNo(Integer topicNo) {
+        this.topicNo = topicNo;
     }
 
     public String getWord() {
@@ -90,20 +107,16 @@ public class Word {
     }
 
     public MutableDocument getDocument() {
-        return new MutableDocument("%d_%s".formatted(topic.getTopicNo(), word))
-                .setInt(Property.topicNo.name(), topic.getTopicNo())
-                .setString(Property.wordText.name(), word)
-                .setString(Property.englName.name(), englName)
-                .setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList()))
-                .setString(Property.description.name(), description);
+        return new MutableDocument("%d_%s".formatted(topicNo, word)).setInt(Property.topicNo.name(), topicNo).setString(Property.wordText.name(), word).setString(Property.englName.name(), englName).setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList())).setString(Property.description.name(), description);
 
     }
 
+    @Override
+    public String toString() {
+        return "Word{topic=%s, word='%s', englName='%s', names=%s, description='%s'}".formatted(topicNo, word, englName, names, description);
+    }
+
     public enum Property {
-        topicNo,
-        wordText,
-        englName,
-        names,
-        description
+        topicNo, wordText, englName, names, description
     }
 }

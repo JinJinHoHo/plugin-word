@@ -5,6 +5,8 @@ import pe.pjh.ws.adapter.out.DataSetManager;
 import pe.pjh.ws.application.port.out.WordManagerPort;
 import pe.pjh.ws.application.service.StatusService;
 
+import java.util.List;
+
 public class WordDicMngService extends AbstractDataSourceService {
 
     private static final Logger log = Logger.getInstance(WordDicMngService.class);
@@ -25,6 +27,14 @@ public class WordDicMngService extends AbstractDataSourceService {
                 database -> wordManagerPort.countWordByTopic(database, topicNo),
                 Integer.class
         );
+    }
+
+    public List<Word> findByTopic(Integer topicNo, Pagination pagination) {
+        return getDataSource()
+                .execute(
+                        database -> wordManagerPort.findByTopic(database, topicNo,pagination),
+                        List.class
+                );
     }
 
 }

@@ -69,14 +69,14 @@ public class LocalCouchbaseDataSource implements DataSource {
 
     @Override
     public boolean connection() {
-        if (connected) return connected;
+        if (connected) return true;
 
         CouchbaseLite.init();
 
         config = new DatabaseConfiguration();
         config.setDirectory(sourceSetting.getPath().toString());
         connected = true;
-        return connected;
+        return true;
 
     }
 
