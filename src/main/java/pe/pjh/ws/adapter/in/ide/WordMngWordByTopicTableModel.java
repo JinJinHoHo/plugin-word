@@ -9,14 +9,33 @@ import pe.pjh.ws.application.service.dataset.Word;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class WordMngTableModel extends AbstractTableModel {
+/**
+ * 단어 관리 하위 토픽별 단어 테이블 모델
+ */
+public class WordMngWordByTopicTableModel extends AbstractTableModel {
     private final String[] columnNames = {"단어", "한글명", "영문명"};
     private List<String[]> data = new ArrayList<>();
 
-    public WordMngTableModel() {
+    final Integer topicNo;
+    final String tabTitle;
+
+    public WordMngWordByTopicTableModel(BundleDataSet bundleDataSet) {
+        this(bundleDataSet.getTopicNo(), bundleDataSet.getName());
+    }
+
+    public WordMngWordByTopicTableModel(Integer topicNo, String tabTitle) {
+        this.topicNo = topicNo;
+        this.tabTitle = tabTitle;
         refresh();
+    }
+
+    public Integer getTopicNo() {
+        return topicNo;
+    }
+
+    public String getTabTitle() {
+        return tabTitle;
     }
 
     public int getColumnCount() {
@@ -38,8 +57,7 @@ public class WordMngTableModel extends AbstractTableModel {
     public void refresh() {
         ApplicationManager.getApplication().invokeLater(() -> {
             List<Word> wordList = AppService.getInstance().getWordDicMngService()
-                    .findByTopic(
-                            BundleDataSet.CMN_STN_TRM_6TH.getTopicNo(), new Pagination());
+                    .findByTopic(topicNo, new Pagination());
 
             data = wordList.stream()
                     .map(word -> new String[]{

@@ -26,7 +26,7 @@ public class BundleDataSetLoder {
         );
 
         return stringMap.stream()
-                .map(stringObjectMap -> new Word(topic, stringObjectMap))
+                .map(stringObjectMap -> new Word(topic.getTopicNo(), stringObjectMap))
                 .toList();
 
     }

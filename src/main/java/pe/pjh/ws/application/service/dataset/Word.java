@@ -43,8 +43,8 @@ public class Word {
         this.description = dictionary.getString(Property.description.name());
     }
 
-    public Word(Topic topic, Map<String, Object> map) {
-        this.topicNo = topic.getTopicNo();
+    public Word(Integer topicNo, Map<String, Object> map) {
+        this.topicNo = topicNo;
         this.word = (String) map.get("word");
         this.englName = (String) map.get("engl_name");
         this.names = (List<String>) map.get("name");
@@ -58,8 +58,8 @@ public class Word {
 
     }
 
-    public Word(Topic topic, String word, String englName, List<String> names, String description) {
-        this.topicNo = topic.getTopicNo();
+    public Word(Integer topicNo, String word, String englName, List<String> names, String description) {
+        this.topicNo = topicNo;
         this.word = word;
         this.englName = englName;
         this.names = names;
