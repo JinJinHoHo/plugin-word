@@ -14,12 +14,11 @@ public class RootPanel {
         wordMngNewWordPanel.getNewWordTable().setModel(wordMngModel.getWordMngNewWordTableModel());
         topicTabbed.addTab("신규단어", null, wordMngNewWordPanel.getBasePanel(), "토픽 추가");
 
-
         wordMngModel.getWordsByTopicTableModels()
                 .forEach(wordsByTopicTableModel -> {
-                    WordMngWordByTopicPanel wordMngWordByTopicPanel = new WordMngWordByTopicPanel();
-                    wordMngWordByTopicPanel.getWordTable().getTableHeader().setReorderingAllowed(false);
-                    wordMngWordByTopicPanel.getWordTable().setModel(wordsByTopicTableModel);
+
+                    WordMngWordByTopicPanel wordMngWordByTopicPanel = new WordMngWordByTopicPanel(wordsByTopicTableModel);
+
                     topicTabbed.addTab(
                             wordsByTopicTableModel.getTabTitle(),
                             null,

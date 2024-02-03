@@ -30,7 +30,7 @@ public class Word {
     public Word(Result result) {
         Dictionary dictionary = result.getDictionary("word");
 
-        this.topicNo = null;
+        this.topicNo = dictionary.getInt(Property.topicNo.name());
         this.word = dictionary.getString(Property.wordText.name());
         this.englName = dictionary.getString(Property.englName.name());
         Array array = dictionary.getArray(Word.Property.names.name());

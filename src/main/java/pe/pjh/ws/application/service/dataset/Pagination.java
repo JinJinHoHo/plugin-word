@@ -1,22 +1,14 @@
 package pe.pjh.ws.application.service.dataset;
 
-public class Pagination {
+public record Pagination(Integer pageNumber, Integer pageSize) {
 
-
-
-    Integer pageNumber = 1;
-    Integer pageSize = 20;
 
     public Pagination() {
+        this(1, 40);
     }
 
     public Pagination(Integer pageNumber) {
-        this.pageNumber = pageNumber;
-    }
-
-    public Pagination(Integer pageNumber, Integer pageSize) {
-        this.pageNumber = pageNumber;
-        this.pageSize = pageSize;
+        this(pageNumber, 40);
     }
 
     public Integer getPageNumber() {

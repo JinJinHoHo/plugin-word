@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class WordMngNewWordPanel {
     private JButton button1;
-    private JButton button2;
     private JTable newWordTable;
     private JPanel basePanel;
 

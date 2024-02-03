@@ -29,10 +29,10 @@ public class WordDicMngService extends AbstractDataSourceService {
         );
     }
 
-    public List<Word> findByTopic(Integer topicNo, Pagination pagination) {
+    public List<Word> findByTopic(Integer topicNo, Condition condition, Pagination pagination) {
         return getDataSource()
                 .execute(
-                        database -> wordManagerPort.findByTopic(database, topicNo,pagination),
+                        database -> wordManagerPort.findByTopic(database, topicNo, condition, pagination),
                         List.class
                 );
     }

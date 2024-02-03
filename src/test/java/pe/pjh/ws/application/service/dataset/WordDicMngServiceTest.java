@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import pe.pjh.ws.application.service.AppInitializer;
 import pe.pjh.ws.application.service.TestContext;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class WordDicMngServiceTest {
@@ -43,9 +45,12 @@ class WordDicMngServiceTest {
                     //테스트용 번들 데이터 설치.
                     initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
-                    assert appService.getWordDicMngService()
-                                   .findByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicNo, new Pagination())
-                                   .size() > 1;
+                    List<Word> wordList = appService.getWordDicMngService()
+                            .findByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicNo,
+                                    new Condition("회"),
+                                    new Pagination());
+
+                    assert wordList.size() > 1;
                 })
         );
     }
