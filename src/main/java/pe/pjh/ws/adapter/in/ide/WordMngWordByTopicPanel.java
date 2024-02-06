@@ -86,15 +86,9 @@ public class WordMngWordByTopicPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                model.deleteWord();
+                model.deleteWord(wordTable.getSelectedRows());
             }
         });
-//
-//        wordTable.getSelectionModel().addListSelectionListener(event -> {
-//            //Do something here
-//            int selectedRow = jTable.getSelectedRow(); //Gets the selected row.
-//            Object selectedObject = jTable.getValueAt(selectedRow, 0); //Gets the value of the first column of the selected row.
-//        });
 
         //초기 데이터 설정.
         model.resetData();

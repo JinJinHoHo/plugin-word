@@ -10,6 +10,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * 단어 관리 하위 토픽별 단어 테이블 모델
@@ -81,8 +83,11 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void deleteWord() {
-
+    public void deleteWord(int[] selectRows) {
+        IntStream.of(selectRows).forEach(index -> {
+            storeWordDatas.get(index).delete();
+        });
+        fireTableDataChanged();
     }
 
     public WordStatus getWordState(int row) {
