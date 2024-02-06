@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import pe.pjh.ws.adapter.out.WordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
-import pe.pjh.ws.adapter.out.datasource.LocalCouchbaseDataSource;
 import pe.pjh.ws.application.exception.DataSourceException;
 import pe.pjh.ws.application.service.dataset.Condition;
 import pe.pjh.ws.application.service.dataset.Pagination;
@@ -45,13 +44,12 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     @Override
     public Integer countWordByTopic(Database database, Integer topicNo) {
 
-        Collection collection = getCollection(database);
-        try (ResultSet results = QueryBuilder
+        Query query = QueryBuilder
                 .select(SelectResult.expression(Function.count(Expression.string("*"))).as("count"))
-                .from(collection(collection))
-                .where(Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo)))
-                .execute()
-        ) {
+                .from(collection(getCollection(database)))
+                .where(Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo)));
+
+        try (ResultSet results = query.execute()) {
             Result result = results.next();
             return result == null ? 0 : result.getInt("count");
         } catch (CouchbaseLiteException e) {
@@ -99,7 +97,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                                     .property(Word.Property.wordText.name()).like(Expression.parameter("wordTextKeyword"))
                                     .or(ArrayExpression
                                             .any(namesVal)
-                                            .in(Expression.property("word.names"))
+                                            .in(Expression.property(Word.Property.names.name()))
                                             .satisfies(namesVal.like(Expression.parameter("nameKeyword")))
                                     )
                     );
@@ -115,8 +113,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
         if (log.isDebugEnabled()) {
             try {
                 log.debug(builderQuery.explain());
-            } catch (CouchbaseLiteException e) {
-                throw new RuntimeException(e);
+            } catch (CouchbaseLiteException ignored) {
             }
         }
 
@@ -130,14 +127,13 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     @Override
     public List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) {
 
-        Collection collection = getCollection(database);
 
-        try (ResultSet results = QueryBuilder
+        Query query = QueryBuilder
                 .select(
                         SelectResult.property(Word.Property.wordText.name()),
                         SelectResult.property(Word.Property.names.name())
                 )
-                .from(collection(collection))
+                .from(collection(getCollection(database)))
                 .where(
                         Expression
                                 .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
@@ -149,9 +145,9 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                                         )
                                         .toArray(value -> new Expression[docWords.length])
                                 )
-                )
-                .execute()
-        ) {
+                );
+
+        try (ResultSet results = query.execute()) {
 
             Map<String, String> map = new HashMap<>();
             results.allResults()
@@ -175,14 +171,12 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     @Override
     public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) {
 
-        Collection collection = getCollection(database);
-
-        try (ResultSet results = QueryBuilder
+        Query query = QueryBuilder
                 .select(
                         SelectResult.property(Word.Property.wordText.name()),
                         SelectResult.property(Word.Property.names.name())
                 )
-                .from(collection(collection))
+                .from(collection(getCollection(database)))
                 .where(
                         Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
                                 .and(Expression.property(Word.Property.wordText.name())
@@ -191,17 +185,25 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                                                 .toArray(value -> new Expression[sourceWords.length])
                                         )
                                 )
-                )
-                .execute()
-        ) {
+                );
+
+        if (log.isDebugEnabled()) {
+            try {
+                log.debug(query.explain());
+            } catch (CouchbaseLiteException ignored) {
+            }
+        }
+
+        try (ResultSet results = query.execute()) {
 
             Map<String, List<String>> map = results.allResults().stream()
                     .collect(Collectors.toMap(
                                     dictionary -> dictionary.getString(Word.Property.wordText.name()),
                                     dictionary -> {
                                         Array array = dictionary.getArray(Word.Property.names.name());
-                                        return (array == null ? new ArrayList<>() : array.toList())
-                                                .stream().map(o -> (String) o).toList();
+                                        return (array == null ? new ArrayList<>() : array.toList()).stream()
+                                                .map(o -> (String) o)
+                                                .toList();
                                     }
                             )
                     );

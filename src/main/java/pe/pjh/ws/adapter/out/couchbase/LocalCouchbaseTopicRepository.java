@@ -1,26 +1,43 @@
 package pe.pjh.ws.adapter.out.couchbase;
 
-import com.couchbase.lite.Collection;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
+import com.couchbase.lite.*;
 import pe.pjh.ws.adapter.out.TopicRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
+import pe.pjh.ws.application.exception.DataSourceException;
 import pe.pjh.ws.application.service.dataset.Topic;
 
+import java.util.List;
 
-public class LocalCouchbaseTopicRepository implements TopicRepository {
 
-    final DataSource dataSource;
+public class LocalCouchbaseTopicRepository extends AbstractCouchbase implements TopicRepository {
 
     public LocalCouchbaseTopicRepository(DataSource dataSource) {
-        this.dataSource = dataSource;
+        super(dataSource);
     }
 
-    public void createTopic(Database database, Topic topic) throws CouchbaseLiteException {
+    @Override
+    protected String getCollectionName() {
+        return "topic";
+    }
 
-        Collection collection = database.getCollection("topic");
-        if(collection==null) return;
+    public void createTopic(Database database, Topic topic) {
 
-        collection.save(topic.getDocument());
+        try {
+            getCollection(database).save(topic.getDocument());
+        } catch (CouchbaseLiteException e) {
+            throw new DataSourceException(e);
+        }
+    }
+
+    public List<Topic> findByTopic(Database database) {
+        Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(com.couchbase.lite.DataSource.collection(getCollection(database)));
+        try (ResultSet results = query.execute()) {
+            return results.allResults().stream()
+                    .map(Topic::new).toList();
+        } catch (CouchbaseLiteException e) {
+            throw new DataSourceException(e);
+        }
     }
 }

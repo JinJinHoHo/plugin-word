@@ -4,7 +4,7 @@ import com.couchbase.lite.*;
 import com.intellij.openapi.diagnostic.Logger;
 import pe.pjh.ws.adapter.out.DataSetType;
 import pe.pjh.ws.application.exception.QueryException;
-import pe.pjh.ws.application.service.setting.DataSetSetting;
+import pe.pjh.ws.application.service.setting.ConnecterSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 import pe.pjh.ws.util.ExecuterReturnParam2;
 
@@ -14,19 +14,19 @@ public class LocalCouchbaseDataSource implements DataSource {
 
     private static final Logger log = Logger.getInstance(LocalCouchbaseDataSource.class);
 
-    DataSetSetting.SourceSetting sourceSetting;
+    ConnecterSetting connecterSetting;
 
     private boolean connected = false;
 
     DatabaseConfiguration config;
 
-    public LocalCouchbaseDataSource(DataSetSetting.SourceSetting dataSourceSetting) {
-        this.sourceSetting = dataSourceSetting;
+    public LocalCouchbaseDataSource(ConnecterSetting dataConnecterSetting) {
+        this.connecterSetting = dataConnecterSetting;
     }
 
 
     public void execute(ExecuterParam1<Database> execute) throws QueryException {
-        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(connecterSetting.getDatabaseName(), config)) {
             execute.execute(database);
         }catch (CouchbaseLiteException e) {
             throw new QueryException(e);
@@ -34,7 +34,7 @@ public class LocalCouchbaseDataSource implements DataSource {
     }
 
     public Document execute(ExecuterReturnParam2<Database, Document> executerParam2) {
-        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(connecterSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
         } catch (CouchbaseLiteException e) {
             throw new QueryException(e);
@@ -42,7 +42,7 @@ public class LocalCouchbaseDataSource implements DataSource {
     }
 
     public void executeBatch(ExecuterParam1<Database> executerParam2) throws QueryException {
-        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(connecterSetting.getDatabaseName(), config)) {
             executerParam2.execute(database);
         }catch (CouchbaseLiteException e) {
             throw new QueryException(e);
@@ -50,7 +50,7 @@ public class LocalCouchbaseDataSource implements DataSource {
     }
 
     public <T> T execute(ExecuterReturnParam2<Database, T> executerParam2, Class<T> t1) throws QueryException {
-        try (Database database = new Database(sourceSetting.getDatabaseName(), config)) {
+        try (Database database = new Database(connecterSetting.getDatabaseName(), config)) {
             return executerParam2.execute(database);
         } catch (CouchbaseLiteException e) {
             throw new QueryException(e);
@@ -59,7 +59,7 @@ public class LocalCouchbaseDataSource implements DataSource {
 
     @Override
     public String getDataSourceName() {
-        return sourceSetting.getDatabaseName();
+        return connecterSetting.getDatabaseName();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class LocalCouchbaseDataSource implements DataSource {
         CouchbaseLite.init();
 
         config = new DatabaseConfiguration();
-        config.setDirectory(sourceSetting.getPath().toString());
+        config.setDirectory(connecterSetting.getPath().toString());
         connected = true;
         return true;
 

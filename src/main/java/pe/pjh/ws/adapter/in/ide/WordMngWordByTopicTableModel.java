@@ -2,15 +2,13 @@ package pe.pjh.ws.adapter.in.ide;
 
 import com.intellij.openapi.application.ApplicationManager;
 import pe.pjh.ws.application.service.AppService;
-import pe.pjh.ws.application.service.dataset.BundleDataSet;
-import pe.pjh.ws.application.service.dataset.Condition;
-import pe.pjh.ws.application.service.dataset.Pagination;
-import pe.pjh.ws.application.service.dataset.Word;
-import pe.pjh.ws.util.ExecuterParam1;
-import pe.pjh.ws.util.ExecuterReturnParam1;
+import pe.pjh.ws.application.service.dataset.*;
 
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -19,7 +17,7 @@ import java.util.List;
 public class WordMngWordByTopicTableModel extends AbstractTableModel {
 
     private final String[] columnNames = {"단어", "한글명", "영문명"};
-    private final List<String[]> data = new ArrayList<>();
+    private final LinkedList<WordStateShell> storeWordDatas = new LinkedList<>();
 
     final Integer topicNo;
     final String tabTitle;
@@ -30,6 +28,10 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
 
     public WordMngWordByTopicTableModel(BundleDataSet bundleDataSet) {
         this(bundleDataSet.getTopicNo(), bundleDataSet.getName());
+    }
+
+    public WordMngWordByTopicTableModel(Topic topic) {
+        this(topic.getTopicNo(), topic.getTopicName());
     }
 
     public WordMngWordByTopicTableModel(Integer topicNo, String tabTitle) {
@@ -50,7 +52,7 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
-        return data.size();
+        return storeWordDatas.size();
     }
 
     public String getColumnName(int col) {
@@ -58,58 +60,88 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
     }
 
     public Object getValueAt(int row, int col) {
-        return data.get(row)[col];
+
+        WordStateShell wordStateShell = storeWordDatas.get(row);
+
+        Word word = wordStateShell.getCurrentWord();
+
+        return switch (col) {
+            case 0 -> word.getWord();
+            case 1 -> String.join(",", word.getNames());
+            case 2 -> word.getEnglName();
+            default -> throw new IllegalStateException("Unexpected value: " + col);
+        };
+    }
+
+    public void addWord() {
+        storeWordDatas.addFirst(
+                new WordStateShell(new Word(topicNo, "", "", new ArrayList<>(), ""),
+                        WordStatus.ADD));
+
+        fireTableDataChanged();
+    }
+
+    public void deleteWord() {
+
+    }
+
+    public WordStatus getWordState(int row) {
+        return storeWordDatas.get(row).getStatus();
     }
 
     public void resetData() {
 
-        Pagination pagination = new Pagination(1);
-
         //기존 데이터 초기화
-        data.clear();
+        storeWordDatas.clear();
 
-        loadData(null, pagination);
+        loadData(null, new Pagination(1), false);
     }
 
     public void findData(String keyword) {
 
-        Pagination pagination = new Pagination(1);
-
         //기존 데이터 초기화
-        data.clear();
+        storeWordDatas.clear();
 
-        loadData(new Condition(keyword), pagination);
+        loadData(new Condition(keyword), new Pagination(1), false);
     }
 
     public void moreData() {
-
 
         Pagination pagination = currentPagination != null
                 ? new Pagination(currentPagination.getPageNumber() + 1)
                 : new Pagination(1);
 
-        loadData(null, pagination);
+        loadData(condition, pagination, true);
     }
 
-    private synchronized void loadData(Condition condition, Pagination pagination) {
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return true;
+    }
+
+    /**
+     * 데이터 로딩
+     * <p>fireTableDataChanged 호출 하는 경우</p>
+     *
+     * @param condition
+     * @param pagination
+     */
+    private synchronized void loadData(Condition condition, Pagination pagination, boolean more) {
 
         ApplicationManager.getApplication().invokeLater(() -> {
 
             List<Word> wordList = AppService.getInstance().getWordDicMngService()
                     .findByTopic(topicNo, condition, pagination);
 
-            if (!wordList.isEmpty()) {
-                data.addAll(wordList.stream()
-                        .map(word -> new String[]{
-                                word.getWord(),
-                                String.join(",", word.getNames()),
-                                word.getEnglName()})
-                        .toList());
-                this.currentPagination = pagination;
-                this.condition = condition;
+            this.condition = condition;
 
-                fireTableDataChanged();
-            }
+            if (wordList.isEmpty() && more) return;
+
+            this.currentPagination = pagination;
+
+            storeWordDatas.addAll(wordList.stream().map(WordStateShell::new).toList());
+
+            fireTableDataChanged();
         });
     }
 }

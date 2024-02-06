@@ -6,7 +6,7 @@ import pe.pjh.ws.adapter.out.couchbase.LocalCouchbaseWordRepository;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.adapter.out.datasource.LocalCouchbaseDataSource;
 import pe.pjh.ws.application.exception.WDException;
-import pe.pjh.ws.application.service.setting.DataSetSetting;
+import pe.pjh.ws.application.service.setting.DataSourceSetting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public final class DataSetManager {
 
     private final Map<String, DataSet> repositoryMap = new HashMap<>();
 
-    public DataSet makeDateSet(DataSetSetting setting) {
+    public DataSet makeDateSet(DataSourceSetting setting) {
 
         if (repositoryMap.containsKey(setting.getDataSetName())) {
             return repositoryMap.get(setting.getDataSetName());

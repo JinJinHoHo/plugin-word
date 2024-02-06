@@ -2,7 +2,7 @@ package pe.pjh.ws.application.service;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import pe.pjh.ws.application.service.dataset.BundleDataSet;
-import pe.pjh.ws.application.service.setting.DataSetSetting;
+import pe.pjh.ws.application.service.setting.DataSourceSetting;
 import pe.pjh.ws.util.ExecuterParam1;
 
 import java.nio.file.Path;
@@ -10,11 +10,11 @@ import java.nio.file.Path;
 public class StatusService {
 
     private final Path workPath;
-    private DataSetSetting currentDataSetSetting;
+    private DataSourceSetting currentDataSourceSetting;
 
     private final Integer currentTopicId = BundleDataSet.CMN_STN_TRM_6TH.getTopicNo();
 
-    private final ExecuterParam1<DataSetSetting> changeDataSetSettingEvent;
+    private final ExecuterParam1<DataSourceSetting> changeDataSetSettingEvent;
 
     /**
      * @param workPath 플러그인 작업 경로.
@@ -22,19 +22,19 @@ public class StatusService {
      */
     protected StatusService(
             Path workPath,
-            ExecuterParam1<DataSetSetting> changeDataSetSettingEvent) {
+            ExecuterParam1<DataSourceSetting> changeDataSetSettingEvent) {
         this.workPath = Path.of(workPath.toString(), "wordic");
         this.changeDataSetSettingEvent = changeDataSetSettingEvent;
     }
 
-    public DataSetSetting getCurrentDataSetSetting() {
-        return currentDataSetSetting;
+    public DataSourceSetting getCurrentDataSetSetting() {
+        return currentDataSourceSetting;
     }
 
-    public void setCurrentDataSetSetting(DataSetSetting currentDataSetSetting) {
-        this.currentDataSetSetting = currentDataSetSetting;
+    public void setCurrentDataSetSetting(DataSourceSetting currentDataSourceSetting) {
+        this.currentDataSourceSetting = currentDataSourceSetting;
         try {
-            changeDataSetSettingEvent.execute(this.currentDataSetSetting);
+            changeDataSetSettingEvent.execute(this.currentDataSourceSetting);
         } catch (CouchbaseLiteException e) {
             throw new RuntimeException(e);
         }

@@ -8,7 +8,7 @@ import pe.pjh.ws.application.service.dataset.BundleDataSet;
 import pe.pjh.ws.application.service.dataset.BundleDataSetLoder;
 import pe.pjh.ws.application.service.dataset.Topic;
 import pe.pjh.ws.application.service.dataset.Word;
-import pe.pjh.ws.application.service.setting.DataSetSetting;
+import pe.pjh.ws.application.service.setting.DataSourceSetting;
 import pe.pjh.ws.application.service.setting.SettingService;
 
 import java.io.IOException;
@@ -80,8 +80,8 @@ public class AppInitializer {
         }
 
         //데이터 소스 설정
-        DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
-        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
+        DataSourceSetting dataSourceSetting = statusService.getCurrentDataSetSetting();
+        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSourceSetting);
 
         DataSource dataSource = dataSet.dataSource();
 
@@ -110,8 +110,8 @@ public class AppInitializer {
             throw new WDException(bundleDataSet + " 설정된 리소스 오류.", e);
         }
 
-        DataSetSetting dataSetSetting = statusService.getCurrentDataSetSetting();
-        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSetSetting);
+        DataSourceSetting dataSourceSetting = statusService.getCurrentDataSetSetting();
+        DataSetManager.DataSet dataSet = dataSetManager.makeDateSet(dataSourceSetting);
         dataSet.dataSource()
                 .executeBatch(database -> database.inBatch(() -> {
                             dataSet.topicRepository().createTopic(database, topic);

@@ -1,6 +1,5 @@
 package pe.pjh.ws.application.service.dataset;
 
-import com.couchbase.lite.CouchbaseLiteException;
 import pe.pjh.ws.adapter.out.DataSetManager;
 import pe.pjh.ws.application.exception.QueryException;
 import pe.pjh.ws.application.port.out.TopicSearchPort;

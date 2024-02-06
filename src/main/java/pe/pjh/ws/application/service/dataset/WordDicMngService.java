@@ -19,7 +19,6 @@ public class WordDicMngService extends AbstractDataSourceService {
             WordManagerPort wordManagerPort) {
         super(statusService, dataSetManager);
         this.wordManagerPort = wordManagerPort;
-
     }
 
     public Integer countWordByTopic(Integer topicNo) {

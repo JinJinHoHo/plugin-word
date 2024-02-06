@@ -1,12 +1,12 @@
 package pe.pjh.ws.adapter.out.couchbase;
 
-import com.couchbase.lite.Collection;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
+import com.couchbase.lite.*;
 import pe.pjh.ws.adapter.out.datasource.DataSource;
 import pe.pjh.ws.application.exception.DataSourceException;
 
 public abstract class AbstractCouchbase {
+
+
     final DataSource dataSource;
 
     public AbstractCouchbase(DataSource dataSource) {

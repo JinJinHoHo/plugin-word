@@ -1,5 +1,6 @@
 package pe.pjh.ws.adapter.in.ide;
 
+import pe.pjh.ws.application.service.AppService;
 import pe.pjh.ws.application.service.dataset.BundleDataSet;
 
 import java.util.ArrayList;
@@ -24,5 +25,10 @@ public class WordMngModel {
 
     public List<WordMngWordByTopicTableModel> getWordsByTopicTableModels() {
         return wordMngWordByTopicTableModels;
+    }
+
+    public void initLoad(){
+        AppService appService = AppService.getInstance();
+        AppService.getInstance().getTopicMngService().findByTopic();
     }
 }

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * 표기법 유형
+ */
 public enum Notation {
 
     Snake(strings -> strings.stream()
