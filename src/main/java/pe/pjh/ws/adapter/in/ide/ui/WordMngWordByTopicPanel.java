@@ -1,10 +1,8 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import com.intellij.openapi.diagnostic.Logger;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -13,19 +11,22 @@ import java.awt.event.MouseEvent;
 public class WordMngWordByTopicPanel {
 
     private static final Logger log = Logger.getInstance(WordMngWordByTopicPanel.class);
+
     private JTable wordTable;
     private JButton addButton;
     private JButton deleteButton;
     private JPanel basePanel;
     private JScrollPane tableScrollPane;
     private JTextField keyword;
+    private JButton commitButton;
+    private JButton rollbackButton;
 
     public WordMngWordByTopicPanel(WordMngWordByTopicTableModel model) {
 
         //테이블 추가 기본정보 설정.
         wordTable.getTableHeader().setReorderingAllowed(false);
         wordTable.setModel(model);
-        wordTable.setDefaultRenderer(Object.class,new ColorCellRenderer());
+        wordTable.setDefaultRenderer(Object.class, new ColorCellRenderer());
 
         //이벤트 설정
         //테이블 모델 변경(fireTableDataChanged 호출) 발생시 실행되는 이벤트
@@ -40,25 +41,20 @@ public class WordMngWordByTopicPanel {
             */
             if (locatedMaximumScrollPoint(verticalScrollBar)) {
                 model.moreData();
-                System.out.println("more fireTableDataChanged");
-            } else {
-                System.out.println("fireTableDataChanged");
             }
-
         });
 
         //세로 스크롤 이벤트 리스너 추가.
-        tableScrollPane.getVerticalScrollBar()
-                .addAdjustmentListener(e -> {
+        tableScrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
 
-                    JScrollBar verticalScrollBar = (JScrollBar) e.getAdjustable();
+            JScrollBar verticalScrollBar = (JScrollBar) e.getAdjustable();
 
-                    //최대값이 아닌경우 반환.
-                    if (!locatedMaximumScrollPoint(verticalScrollBar)) return;
+            //최대값이 아닌경우 반환.
+            if (!locatedMaximumScrollPoint(verticalScrollBar)) return;
 
-                    //스크롤 끝에 왔을 경우 더보기 요청.
-                    model.moreData();
-                });
+            //스크롤 끝에 왔을 경우 더보기 요청.
+            model.moreData();
+        });
 
         keyword.addKeyListener(new KeyAdapter() {
             @Override
@@ -92,8 +88,6 @@ public class WordMngWordByTopicPanel {
 
         //초기 데이터 설정.
         model.resetData();
-
-
     }
 
     private boolean locatedMaximumScrollPoint(JScrollBar verticalScrollBar) {
@@ -103,8 +97,10 @@ public class WordMngWordByTopicPanel {
         int currentScrollPoint = verticalScrollBar.getValue();
 
         if (log.isDebugEnabled()) {
-            log.debug(verticalScrollBar.getMaximum() + ":" + verticalScrollBar.getHeight() + ":" +
-                      verticalScrollBar.getValue() + ":" + (maxScrollPoint == currentScrollPoint));
+            log.debug("%d:%d:%d:%s".formatted(
+                    verticalScrollBar.getMaximum(), verticalScrollBar.getHeight(),
+                    verticalScrollBar.getValue(), maxScrollPoint == currentScrollPoint)
+            );
         }
 
         return maxScrollPoint == currentScrollPoint;

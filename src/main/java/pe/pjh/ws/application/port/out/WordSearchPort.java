@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface WordSearchPort {
 
-    List<String> requestSourceName(Database database, Integer topicNo, String[] docWords);
+    List<String> requestSourceName(Database database, String topicId, String[] docWords);
 
-    List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords);
+    List<List<String>> requestDocumentName(Database database, String topicId, String[] sourceWords);
 
 }

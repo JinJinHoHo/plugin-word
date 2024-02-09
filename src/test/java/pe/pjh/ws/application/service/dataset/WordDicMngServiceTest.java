@@ -7,8 +7,6 @@ import pe.pjh.ws.application.service.TestContext;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class WordDicMngServiceTest {
 
     @Test
@@ -25,7 +23,7 @@ class WordDicMngServiceTest {
                     initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
                     assert appService.getWordDicMngService()
-                                   .countWordByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicNo) > 1;
+                                   .countWordByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicId) > 1;
 
                 })
         );
@@ -46,7 +44,7 @@ class WordDicMngServiceTest {
                     initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
                     List<Word> wordList = appService.getWordDicMngService()
-                            .findByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicNo,
+                            .findByTopic(BundleDataSet.CMN_STN_TRM_6TH.topicId,
                                     new Condition("회"),
                                     new Pagination());
 

@@ -42,12 +42,12 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     }
 
     @Override
-    public Integer countWordByTopic(Database database, Integer topicNo) {
+    public Integer countWordByTopic(Database database, String topicId) {
 
         Query query = QueryBuilder
                 .select(SelectResult.expression(Function.count(Expression.string("*"))).as("count"))
                 .from(collection(getCollection(database)))
-                .where(Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo)));
+                .where(Expression.property(Word.Property.topicId.name()).equalTo(Expression.string(topicId)));
 
         try (ResultSet results = query.execute()) {
             Result result = results.next();
@@ -60,7 +60,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     @Override
     public List<Word> findByTopic(
             @NonNls Database database,
-            @NonNls Integer topicNo,
+            @NonNls String topicId,
             @Nls Condition condition, @NonNls Pagination pagination) {
 
         /*
@@ -74,7 +74,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
 
         //파라미터 설정.
         Parameters parameters = new Parameters()
-                .setInt("topicNo", topicNo)
+                .setString("topicId", topicId)
                 .setInt("li", pagination.pageSize())
                 .setInt("offs", pagination.getPageSize() * (pagination.getPageNumber() - 1));
 
@@ -86,7 +86,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
 
         //기본 조건문
         Expression whereExpression = Expression
-                .property(Word.Property.topicNo.name()).equalTo(Expression.parameter("topicNo"));
+                .property(Word.Property.topicId.name()).equalTo(Expression.parameter("topicId"));
 
         //검색어에 따라 추가된 조건문
         if (condition != null && StringUtils.isNotBlank(condition.keyword())) {
@@ -125,7 +125,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
     }
 
     @Override
-    public List<String> requestSourceName(Database database, Integer topicNo, String[] docWords) {
+    public List<String> requestSourceName(Database database, String topicId, String[] docWords) {
 
 
         Query query = QueryBuilder
@@ -136,7 +136,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                 .from(collection(getCollection(database)))
                 .where(
                         Expression
-                                .property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                                .property(Word.Property.topicId.name()).equalTo(Expression.string(topicId))
                                 .in(Stream.of(docWords)
                                         .map(s -> ArrayFunction.contains(
                                                         Expression.property(Word.Property.names.name()),
@@ -169,7 +169,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
 
 
     @Override
-    public List<List<String>> requestDocumentName(Database database, Integer topicNo, String[] sourceWords) {
+    public List<List<String>> requestDocumentName(Database database, String topicId, String[] sourceWords) {
 
         Query query = QueryBuilder
                 .select(
@@ -178,7 +178,7 @@ public class LocalCouchbaseWordRepository extends AbstractCouchbase implements W
                 )
                 .from(collection(getCollection(database)))
                 .where(
-                        Expression.property(Word.Property.topicNo.name()).equalTo(Expression.intValue(topicNo))
+                        Expression.property(Word.Property.topicId.name()).equalTo(Expression.string(topicId))
                                 .and(Expression.property(Word.Property.wordText.name())
                                         .in(Stream.of(sourceWords)
                                                 .map(Expression::string)

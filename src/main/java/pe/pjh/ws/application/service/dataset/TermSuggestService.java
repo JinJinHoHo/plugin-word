@@ -27,12 +27,12 @@ public class TermSuggestService extends AbstractDataSourceService {
         return requestSourceName(statusService.getCurrentTopicId(), documentName, notation);
     }
 
-    public String requestSourceName(Integer topicNo, String documentName, Notation notation) {
+    public String requestSourceName(String topicId, String documentName, Notation notation) {
 
         String[] documentWords = documentName.split(" ");
 
         List<String> wordList = getDataSource()
-                .execute(database -> wordSearchPort.requestSourceName(database, topicNo, documentWords), List.class);
+                .execute(database -> wordSearchPort.requestSourceName(database, topicId, documentWords), List.class);
         return notation.convert(wordList);
     }
 
@@ -40,7 +40,7 @@ public class TermSuggestService extends AbstractDataSourceService {
         return requestDocumentName(statusService.getCurrentTopicId(), sourceName);
     }
 
-    public String requestDocumentName(Integer topicNo, String sourceName) {
+    public String requestDocumentName(String topicId, String sourceName) {
 
         //카멜 또는 파스칼 케이스로 되여 있는것을 분리 처리.
         String[] split = sourceName.replaceAll("([A-Za-z])([a-z]+)", " $1$2")
@@ -48,7 +48,7 @@ public class TermSuggestService extends AbstractDataSourceService {
                 .split(" ");
 
         List<List<String>> wordList = getDataSource()
-                .execute(database -> wordSearchPort.requestDocumentName(database, topicNo, split), List.class);
+                .execute(database -> wordSearchPort.requestDocumentName(database, topicId, split), List.class);
 
 
         return wordList.stream()

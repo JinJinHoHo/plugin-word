@@ -1,4 +1,4 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import com.intellij.openapi.application.ApplicationManager;
 import pe.pjh.ws.application.service.AppService;

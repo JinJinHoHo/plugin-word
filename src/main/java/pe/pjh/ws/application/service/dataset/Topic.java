@@ -7,18 +7,18 @@ import com.couchbase.lite.Result;
 public class Topic {
 
     private String topicName;
-    private Integer topicNo;
+    private String topicId;
 
     public Topic(Result result) {
         Dictionary dictionary = result.getDictionary("topic");
 
-        this.topicNo = dictionary.getInt(Topic.Property.topicNo.name());
+        this.topicId = dictionary.getString(Topic.Property.topicId.name());
         this.topicName = dictionary.getString(Property.topicName.name());
     }
 
-    public Topic(String topicName, Integer topicNo) {
+    public Topic(String topicName, String topicId) {
         this.topicName = topicName;
-        this.topicNo = topicNo;
+        this.topicId = topicId;
     }
 
     public String getTopicName() {
@@ -29,21 +29,21 @@ public class Topic {
         this.topicName = topicName;
     }
 
-    public Integer getTopicNo() {
-        return topicNo;
+    public String getTopicId() {
+        return topicId;
     }
 
-    public void setTopicNo(Integer topicNo) {
-        this.topicNo = topicNo;
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 
     public MutableDocument getDocument() {
-        return new MutableDocument(topicNo.toString())
-                .setInt(Property.topicNo.name(), topicNo)
+        return new MutableDocument(topicId.toString())
+                .setString(Property.topicId.name(), topicId)
                 .setString(Property.topicName.name(), topicName);
     }
 
     public enum Property {
-        topicNo, topicName
+        topicId, topicName
     }
 }

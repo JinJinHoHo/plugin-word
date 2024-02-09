@@ -1,7 +1,6 @@
 package pe.pjh.ws.application.service.dataset;
 
 import com.couchbase.lite.*;
-import com.intellij.icons.AllIcons;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.stream.Stream;
  */
 public class Word {
 
-    private Integer topicNo;
+    private String topicId;
     private String word;
     private String englName;
 
@@ -30,7 +29,7 @@ public class Word {
     public Word(Result result) {
         Dictionary dictionary = result.getDictionary("word");
 
-        this.topicNo = dictionary.getInt(Property.topicNo.name());
+        this.topicId = dictionary.getString(Property.topicId.name());
         this.word = dictionary.getString(Property.wordText.name());
         this.englName = dictionary.getString(Property.englName.name());
         Array array = dictionary.getArray(Word.Property.names.name());
@@ -43,8 +42,8 @@ public class Word {
         this.description = dictionary.getString(Property.description.name());
     }
 
-    public Word(Integer topicNo, Map<String, Object> map) {
-        this.topicNo = topicNo;
+    public Word(String topicId, Map<String, Object> map) {
+        this.topicId = topicId;
         this.word = (String) map.get("word");
         this.englName = (String) map.get("engl_name");
         this.names = (List<String>) map.get("name");
@@ -58,20 +57,20 @@ public class Word {
 
     }
 
-    public Word(Integer topicNo, String word, String englName, List<String> names, String description) {
-        this.topicNo = topicNo;
+    public Word(String topicId, String word, String englName, List<String> names, String description) {
+        this.topicId = topicId;
         this.word = word;
         this.englName = englName;
         this.names = names;
         this.description = description;
     }
 
-    public Integer getTopicNo() {
-        return topicNo;
+    public String getTopicId() {
+        return topicId;
     }
 
-    public void setTopicNo(Integer topicNo) {
-        this.topicNo = topicNo;
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 
     public String getWord() {
@@ -107,16 +106,17 @@ public class Word {
     }
 
     public MutableDocument getDocument() {
-        return new MutableDocument("%d_%s".formatted(topicNo, word)).setInt(Property.topicNo.name(), topicNo).setString(Property.wordText.name(), word).setString(Property.englName.name(), englName).setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList())).setString(Property.description.name(), description);
+        return new MutableDocument("%d_%s".formatted(topicId, word))
+                .setString(Property.topicId.name(), topicId).setString(Property.wordText.name(), word).setString(Property.englName.name(), englName).setArray(Property.names.name(), new MutableArray(names.stream().map(s -> (Object) s).toList())).setString(Property.description.name(), description);
 
     }
 
     @Override
     public String toString() {
-        return "Word{topic=%s, word='%s', englName='%s', names=%s, description='%s'}".formatted(topicNo, word, englName, names, description);
+        return "Word{topic=%s, word='%s', englName='%s', names=%s, description='%s'}".formatted(topicId, word, englName, names, description);
     }
 
     public enum Property {
-        topicNo, wordText, englName, names, description
+        topicId, wordText, englName, names, description
     }
 }

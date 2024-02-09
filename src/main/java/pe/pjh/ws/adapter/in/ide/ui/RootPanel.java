@@ -1,4 +1,4 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import javax.swing.*;
 
@@ -26,7 +26,8 @@ public class RootPanel {
                             wordsByTopicTableModel.getTabTitle());
                 });
 
-        topicTabbed.addTab("+", null, new JPanel(), "토픽 추가");
+        WordMngTopicFormPanel topic = new WordMngTopicFormPanel();
+        topicTabbed.addTab("+", null, topic.getContentPane(), "토픽 추가");
     }
 
     public JPanel getBasePanel() {

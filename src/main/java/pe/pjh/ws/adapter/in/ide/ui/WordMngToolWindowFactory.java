@@ -1,4 +1,4 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;

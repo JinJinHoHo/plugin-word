@@ -15,6 +15,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pe.pjh.ws.adapter.in.ide.ui.UiBundle;
 import pe.pjh.ws.application.service.AppService;
 import pe.pjh.ws.application.service.setting.SettingService;
 

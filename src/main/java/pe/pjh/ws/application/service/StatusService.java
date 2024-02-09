@@ -12,7 +12,7 @@ public class StatusService {
     private final Path workPath;
     private DataSourceSetting currentDataSourceSetting;
 
-    private final Integer currentTopicId = BundleDataSet.CMN_STN_TRM_6TH.getTopicNo();
+    private final String currentTopicId = BundleDataSet.CMN_STN_TRM_6TH.getTopicId();
 
     private final ExecuterParam1<DataSourceSetting> changeDataSetSettingEvent;
 
@@ -45,7 +45,7 @@ public class StatusService {
     }
 
 
-    public Integer getCurrentTopicId() {
+    public String getCurrentTopicId() {
         return currentTopicId;
     }
 }

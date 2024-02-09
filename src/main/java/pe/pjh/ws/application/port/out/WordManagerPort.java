@@ -8,7 +8,7 @@ import pe.pjh.ws.application.service.dataset.Word;
 import java.util.List;
 
 public interface WordManagerPort {
-    Integer countWordByTopic(Database database, Integer Topic);
+    Integer countWordByTopic(Database database, String topicId);
 
-    List<Word> findByTopic(Database database, Integer Topic, Condition condition, Pagination pagination);
+    List<Word> findByTopic(Database database, String topicId, Condition condition, Pagination pagination);
 }

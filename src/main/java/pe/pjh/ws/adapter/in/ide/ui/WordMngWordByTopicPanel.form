@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="pe.pjh.ws.adapter.in.ide.WordMngWordByTopicPanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="pe.pjh.ws.adapter.in.ide.ui.WordMngWordByTopicPanel">
   <grid id="27dc6" binding="basePanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
@@ -34,6 +34,18 @@
               <minimumSize width="30" height="30"/>
               <preferredSize width="30" height="30"/>
               <text value="-"/>
+            </properties>
+          </component>
+          <component id="a9556" class="javax.swing.JButton" binding="commitButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Commit"/>
+            </properties>
+          </component>
+          <component id="eed5d" class="javax.swing.JButton" binding="rollbackButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <text value="Rollback"/>
             </properties>
           </component>
         </children>

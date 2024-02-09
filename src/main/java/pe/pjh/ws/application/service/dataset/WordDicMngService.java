@@ -21,17 +21,17 @@ public class WordDicMngService extends AbstractDataSourceService {
         this.wordManagerPort = wordManagerPort;
     }
 
-    public Integer countWordByTopic(Integer topicNo) {
+    public Integer countWordByTopic(String topicId) {
         return getDataSource().execute(
-                database -> wordManagerPort.countWordByTopic(database, topicNo),
+                database -> wordManagerPort.countWordByTopic(database, topicId),
                 Integer.class
         );
     }
 
-    public List<Word> findByTopic(Integer topicNo, Condition condition, Pagination pagination) {
+    public List<Word> findByTopic(String topicId, Condition condition, Pagination pagination) {
         return getDataSource()
                 .execute(
-                        database -> wordManagerPort.findByTopic(database, topicNo, condition, pagination),
+                        database -> wordManagerPort.findByTopic(database, topicId, condition, pagination),
                         List.class
                 );
     }

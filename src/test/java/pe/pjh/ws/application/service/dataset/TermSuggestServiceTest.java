@@ -21,13 +21,13 @@ class TermSuggestServiceTest {
                     initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
                     assert "cpuApiRdcrt".equals(appService.getTermSuggestService()
-                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicNo, "CPU API 감면율", Notation.Camel));
+                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicId, "CPU API 감면율", Notation.Camel));
 
                     assert "CpuApiRdcrt".equals(appService.getTermSuggestService()
-                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicNo, "CPU API 감면율", Notation.Pascal));
+                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicId, "CPU API 감면율", Notation.Pascal));
 
                     assert "cpu_api_rdcrt".equals(appService.getTermSuggestService()
-                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicNo, "CPU API 감면율", Notation.Snake));
+                            .requestSourceName(BundleDataSet.CMN_STN_TRM_6TH.topicId, "CPU API 감면율", Notation.Snake));
                 })
         );
     }
@@ -46,7 +46,7 @@ class TermSuggestServiceTest {
                     initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
                     assert "CPU API 감면율".equals(appService.getTermSuggestService()
-                            .requestDocumentName(BundleDataSet.CMN_STN_TRM_6TH.topicNo, "cpuApiRdcrt"));
+                            .requestDocumentName(BundleDataSet.CMN_STN_TRM_6TH.topicId, "cpuApiRdcrt"));
 
                 })
         );

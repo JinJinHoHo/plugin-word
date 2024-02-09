@@ -1,6 +1,7 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import com.intellij.ui.JBColor;
+import pe.pjh.ws.adapter.in.ide.ui.WordMngWordByTopicTableModel;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

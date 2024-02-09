@@ -1,27 +1,27 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import com.intellij.openapi.application.ApplicationManager;
 import pe.pjh.ws.application.service.AppService;
 import pe.pjh.ws.application.service.dataset.*;
 
-import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * 단어 관리 하위 토픽별 단어 테이블 모델
  */
 public class WordMngWordByTopicTableModel extends AbstractTableModel {
 
+    //private final String[] columnNames = {"단어", "한글명", "영문명"};
+
     private final String[] columnNames = {"단어", "한글명", "영문명"};
+
+    private final String[] fullModeColumnNames = {"단어", "한글명", "영문명", "설명"};
     private final LinkedList<WordStateShell> storeWordDatas = new LinkedList<>();
 
-    final Integer topicNo;
+    final String topicId;
     final String tabTitle;
 
     private Condition condition = null;
@@ -29,20 +29,20 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
 
 
     public WordMngWordByTopicTableModel(BundleDataSet bundleDataSet) {
-        this(bundleDataSet.getTopicNo(), bundleDataSet.getName());
+        this(bundleDataSet.getTopicId(), bundleDataSet.getName());
     }
 
     public WordMngWordByTopicTableModel(Topic topic) {
-        this(topic.getTopicNo(), topic.getTopicName());
+        this(topic.getTopicId(), topic.getTopicName());
     }
 
-    public WordMngWordByTopicTableModel(Integer topicNo, String tabTitle) {
-        this.topicNo = topicNo;
+    public WordMngWordByTopicTableModel(String topicId, String tabTitle) {
+        this.topicId = topicId;
         this.tabTitle = tabTitle;
     }
 
-    public Integer getTopicNo() {
-        return topicNo;
+    public String getTopicId() {
+        return topicId;
     }
 
     public String getTabTitle() {
@@ -71,13 +71,14 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
             case 0 -> word.getWord();
             case 1 -> String.join(",", word.getNames());
             case 2 -> word.getEnglName();
+            case 3 -> word.getDescription();
             default -> throw new IllegalStateException("Unexpected value: " + col);
         };
     }
 
     public void addWord() {
         storeWordDatas.addFirst(
-                new WordStateShell(new Word(topicNo, "", "", new ArrayList<>(), ""),
+                new WordStateShell(new Word(topicId, "", "", new ArrayList<>(), ""),
                         WordStatus.ADD));
 
         fireTableDataChanged();
@@ -136,7 +137,7 @@ public class WordMngWordByTopicTableModel extends AbstractTableModel {
         ApplicationManager.getApplication().invokeLater(() -> {
 
             List<Word> wordList = AppService.getInstance().getWordDicMngService()
-                    .findByTopic(topicNo, condition, pagination);
+                    .findByTopic(topicId, condition, pagination);
 
             this.condition = condition;
 

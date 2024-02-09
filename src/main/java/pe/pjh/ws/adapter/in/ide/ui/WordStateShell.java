@@ -1,4 +1,4 @@
-package pe.pjh.ws.adapter.in.ide;
+package pe.pjh.ws.adapter.in.ide.ui;
 
 import org.jetbrains.annotations.NonNls;
 import pe.pjh.ws.application.service.dataset.Word;

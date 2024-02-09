@@ -49,7 +49,7 @@ class AppInitializerTest {
                 initializer.setupBundleDataset(BundleDataSet.CMN_STN_TRM_6TH);
 
                 Integer wordCount = appService.getWordDicMngService()
-                        .countWordByTopic(BundleDataSet.CMN_STN_TRM_6TH.getTopicNo());
+                        .countWordByTopic(BundleDataSet.CMN_STN_TRM_6TH.getTopicId());
                 assert wordCount > 0;
             });
 

@@ -35,6 +35,6 @@
         </intentionAction>
         <toolWindow id="Word Manager"
                     anchor="right"
-                    factoryClass="pe.pjh.ws.adapter.in.ide.WordMngToolWindowFactory"/>
+                    factoryClass="pe.pjh.ws.adapter.in.ide.ui.WordMngToolWindowFactory"/>
     </extensions>
 </idea-plugin>
